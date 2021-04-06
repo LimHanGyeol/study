@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.List;
 
 public class Main {
 
@@ -16,14 +15,10 @@ public class Main {
         transaction.begin();
 
         try {
-//             Member 객체 Select 및 Update
-//             Member member = entityManager.find(Member.class, 1L);
-//             member.update("tommy");
+            Member findMember = entityManager.find(Member.class, 12L);
+            findMember.update("kkkk");
 
-            List<Member> results = entityManager.createQuery("SELECT m FROM Member ", Member.class)
-                    .setFirstResult(1)
-                    .setMaxResults(10)
-                    .getResultList();
+            System.out.println("================");
 
             transaction.commit();
         } catch (Exception e) {
