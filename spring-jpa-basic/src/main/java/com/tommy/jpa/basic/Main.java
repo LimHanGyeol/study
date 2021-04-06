@@ -16,7 +16,9 @@ public class Main {
 
         try {
             Member findMember = entityManager.find(Member.class, 12L);
-            findMember.update("kkkk");
+            findMember.update("AAA");
+
+            entityManager.detach(findMember); // 준영속 상태 (detach)
 
             System.out.println("================");
 
