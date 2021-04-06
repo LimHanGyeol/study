@@ -15,9 +15,21 @@ public class Main {
         transaction.begin();
 
         try {
-            Account account = new Account(1L, "tommy", 27, RoleType.USER);
+            Team teamBlue = new Team("청팀");
+            entityManager.persist(teamBlue);
 
-            entityManager.persist(account);
+            Team teamRed = new Team("적팀");
+            entityManager.persist(teamRed);
+
+            Member member = new Member("임한결");
+            member.addTeamId(teamBlue);
+            entityManager.persist(member);
+
+            entityManager.find(Member.class, member.getId()); // 1차 캐시로 인해 Select 쿼리가 발생하지 않음
+
+            Team findTeamRed = entityManager.find(Team.class, teamRed.getId());
+            member.addTeamId(findTeamRed); // 더티체킹
+
 
             transaction.commit();
         } catch (Exception e) {
