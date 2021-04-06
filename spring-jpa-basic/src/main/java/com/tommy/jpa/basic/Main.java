@@ -15,12 +15,9 @@ public class Main {
         transaction.begin();
 
         try {
-            Member findMember = entityManager.find(Member.class, 12L);
-            findMember.update("AAA");
+            Member member = new Member(1L, "tommy", 27, RoleType.USER);
 
-            entityManager.detach(findMember); // 준영속 상태 (detach)
-
-            System.out.println("================");
+            entityManager.persist(member);
 
             transaction.commit();
         } catch (Exception e) {
