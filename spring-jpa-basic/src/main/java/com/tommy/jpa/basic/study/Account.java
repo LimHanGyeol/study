@@ -1,11 +1,11 @@
-package com.tommy.jpa.basic;
+package com.tommy.jpa.basic.study;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 // @Table // 엔티티와 매핑할 테이블 지정
 @Entity // JPA에서 사용할 엔티티 이름을 지정
-public class Member {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,10 +26,10 @@ public class Member {
     @Lob
     private String description;
 
-    protected Member() {
+    protected Account() {
     }
 
-    public Member(Long id, String name, Integer age, RoleType roleType) {
+    public Account(Long id, String name, Integer age, RoleType roleType) {
         this.id = id;
         this.name = name;
         this.age = age;
