@@ -1,5 +1,8 @@
 package com.tommy.jpa.basic.jpashop;
 
+import com.tommy.jpa.basic.jpashop.domain.Order;
+import com.tommy.jpa.basic.jpashop.domain.OrderItem;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -15,6 +18,8 @@ public class JpaMain {
         transaction.begin();
 
         try {
+            Order order = new Order();
+            order.addOrderItem(new OrderItem());
 
             transaction.commit();
         } catch (Exception e) {
