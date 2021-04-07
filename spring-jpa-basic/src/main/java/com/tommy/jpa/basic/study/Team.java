@@ -24,6 +24,10 @@ public class Team {
         this.name = name;
     }
 
+    public void subscription(Member member) {
+        this.members.add(member);
+    }
+
     public Long getId() {
         return id;
     }

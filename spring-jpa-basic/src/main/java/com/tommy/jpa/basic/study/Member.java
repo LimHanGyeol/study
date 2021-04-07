@@ -24,8 +24,10 @@ public class Member {
         this.name = name;
     }
 
-    public void addTeamId(Team team) {
+    // 양방향 관계 설정 시에는 두 객체에 값을 설정해줘야 한다.
+    public void joinTeam(Team team) {
         this.team = team;
+        team.subscription(this);
     }
 
     public Long getId() {

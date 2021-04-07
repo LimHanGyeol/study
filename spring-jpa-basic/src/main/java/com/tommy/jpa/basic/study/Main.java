@@ -20,15 +20,9 @@ public class Main {
             entityManager.persist(teamBlue);
 
             Member member = new Member("임한결");
-            member.addTeamId(teamBlue);
+            // 양방향 관계 설정 시에는 두 객체에 값을 설정해줘야 한다.
+            member.joinTeam(teamBlue);
             entityManager.persist(member);
-
-            Member findMember = entityManager.find(Member.class, member.getId());// 1차 캐시로 인해 Select 쿼리가 발생하지 않음
-            List<Member> members = findMember.getTeam().getMembers();
-
-            for (Member m : members) {
-                System.out.println("Main.main" + m);
-            }
 
             transaction.commit();
         } catch (Exception e) {
