@@ -1,6 +1,8 @@
 package com.tommy.jpa.basic.study;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Team {
@@ -9,7 +11,11 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TEAM_ID")
     private Long id;
+
     private String name;
+
+    @OneToMany(mappedBy = "team") // members 는 Member.team으로 매핑이 되어 있다.
+    private List<Member> members = new ArrayList<>();
 
     public Team() {
     }
@@ -24,5 +30,9 @@ public class Team {
 
     public String getName() {
         return name;
+    }
+
+    public List<Member> getMembers() {
+        return members;
     }
 }
