@@ -1,9 +1,9 @@
-package com.tommy.jpa.basic.study.shop;
+package com.tommy.jpa.basic.jpashop.domain;
 
 import javax.persistence.Entity;
 
 @Entity
-public class Book extends Items {
+public class Book extends Item {
 
     private String author;
     private String isbn;

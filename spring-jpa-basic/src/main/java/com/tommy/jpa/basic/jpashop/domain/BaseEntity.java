@@ -1,4 +1,4 @@
-package com.tommy.jpa.basic.study;
+package com.tommy.jpa.basic.jpashop.domain;
 
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.tommy.jpa.basic.study.shop;
+package com.tommy.jpa.basic.jpashop.domain;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("A")
-public class Movie extends Items {
+public class Movie extends Item {
 
     private String director;
     private String actor;
@@ -18,8 +18,7 @@ public class Movie extends Items {
     protected Movie() {
     }
 
-    public Movie(String name, Integer price, String director, String actor) {
-        super(name, price);
+    public Movie(String director, String actor) {
         this.director = director;
         this.actor = actor;
     }

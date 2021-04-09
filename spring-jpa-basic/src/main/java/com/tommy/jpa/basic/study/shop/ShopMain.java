@@ -1,5 +1,7 @@
 package com.tommy.jpa.basic.study.shop;
 
+import com.tommy.jpa.basic.jpashop.domain.Movie;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -15,15 +17,15 @@ public class ShopMain {
         transaction.begin();
 
         try {
-            Movie movie = new Movie("인셉션", 123, "aaa", "bbb");
+//            Movie movie = new Movie("인셉션", 123, "aaa", "bbb");
 
-            entityManager.persist(movie);
+//            entityManager.persist(movie);
 
             entityManager.flush();
             entityManager.clear();
 
-            Movie findMovie = entityManager.find(Movie.class, movie.getId());
-            System.out.println("findMovie = " + findMovie);
+//            Movie findMovie = entityManager.find(Movie.class, movie.getId());
+//            System.out.println("findMovie = " + findMovie);
 
             transaction.commit();
         } catch (Exception e) {

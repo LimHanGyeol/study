@@ -1,5 +1,7 @@
 package com.tommy.jpa.basic.study;
 
+import com.tommy.jpa.basic.jpashop.domain.BaseEntity;
+
 import javax.persistence.*;
 
 // @Table // 엔티티와 매핑할 테이블 지정
