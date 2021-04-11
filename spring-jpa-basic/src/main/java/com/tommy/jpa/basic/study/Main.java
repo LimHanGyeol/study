@@ -1,5 +1,7 @@
 package com.tommy.jpa.basic.study;
 
+import com.tommy.jpa.basic.jpashop.domain.Address;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;

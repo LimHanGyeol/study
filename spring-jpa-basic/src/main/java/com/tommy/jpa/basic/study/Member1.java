@@ -1,5 +1,7 @@
 package com.tommy.jpa.basic.study;
 
+import com.tommy.jpa.basic.jpashop.domain.Address;
+
 import javax.persistence.*;
 
 /**
@@ -13,7 +15,7 @@ import javax.persistence.*;
  * @OneToMany, @ManyToMany는 기본이 지연로딩이다.
  */
 @Entity
-public class Member {
+public class Member1 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,10 +47,10 @@ public class Member {
     })
     private Address workAddress;
 
-    public Member() {
+    public Member1() {
     }
 
-    public Member(String name) {
+    public Member1(String name) {
         this.name = name;
     }
 

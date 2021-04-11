@@ -1,5 +1,7 @@
 package com.tommy.jpa.basic.study;
 
+import com.tommy.jpa.basic.jpashop.domain.Address;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
