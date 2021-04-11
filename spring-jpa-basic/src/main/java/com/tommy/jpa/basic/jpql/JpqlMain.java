@@ -1,11 +1,8 @@
-package com.tommy.jpa.basic;
+package com.tommy.jpa.basic.jpql;
 
 import com.tommy.jpa.basic.jpashop.domain.Member;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,6 +21,11 @@ public class JpqlMain {
             // createJPQL(entityManager);
             // createCriteria(entityManager);
             // createNativeQuery(entityManager);
+            // createDefaultJpqlAndQueryAPI(entityManager);
+
+            MemberJ member = new MemberJ("Hangyeol", 27);
+            entityManager.persist(member);
+
 
             transaction.commit();
         } catch (Exception e) {
@@ -32,6 +34,25 @@ public class JpqlMain {
             entityManager.close();
         }
         entityManagerFactory.close();
+    }
+
+    private static void createDefaultJpqlAndQueryAPI(EntityManager entityManager) {
+        // TypeQuery : 반환 타입이 명확한 경우
+        // 메서드 체이닝으로 엮을 수 있다.
+        MemberJ result = entityManager.createQuery("SELECT m FROM MemberJ AS m WHERE m.username = :username", MemberJ.class)
+                .setParameter("username", "Hangyeol")
+                .getSingleResult();
+
+        System.out.println("singleResult = " + result.getUsername());
+
+        TypedQuery<String> query2 = entityManager.createQuery(
+                "SELECT m.username FROM MemberJ AS m", String.class
+        );
+
+        // Query : 반환 타입이 명확하지 않은 경우
+        Query query3 = entityManager.createQuery(
+                "SELECT m.username, m.age FROM MemberJ AS m"
+        );
     }
 
     private static void createNativeQuery(EntityManager entityManager) {
