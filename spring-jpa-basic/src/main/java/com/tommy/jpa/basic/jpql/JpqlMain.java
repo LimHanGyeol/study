@@ -8,6 +8,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+import static com.tommy.jpa.basic.jpql.Projection.*;
+
 public class JpqlMain {
 
     public static void main(String[] args) {
@@ -26,6 +28,10 @@ public class JpqlMain {
             MemberJ member = new MemberJ("Hangyeol", 27);
             entityManager.persist(member);
 
+            // 프로젝션으로 반환한 객체도 영속성 컨텍스트의 관리 대상이 된다.
+            entityTypeProjection(entityManager);
+            embeddedTypeProjection(entityManager);
+            scalaTypeProjection(entityManager);
 
             transaction.commit();
         } catch (Exception e) {
