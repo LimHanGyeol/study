@@ -18,18 +18,18 @@ public class Order {
     @Column(name = "ORDER_ID")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
 
     // Member의 양방향 관계를 맺은 사유와 마찬가지로, 양방향 관계는 권장하지 않는다.
     // 하지만 업무 시 JPQL을 작성할때 등의 상황에서 조회의 필요성이 생길 경우가 있다.
     // 그런 상황에 양방향 관계를 맺기도 한다.
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate;

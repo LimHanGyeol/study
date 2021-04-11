@@ -10,11 +10,27 @@ public class Delivery {
     @Column(name = "DELIVERY_ID")
     private Long id;
 
-    private String city;
-    private String street;
-    private String zipCode;
+    @Embedded
+    private Address address;
+
     private DeliveryStatus deliveryStatus;
 
-    @OneToOne(mappedBy = "delivery")
+    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
     private Order order;
+
+    public Long getId() {
+        return id;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public DeliveryStatus getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
 }
