@@ -23,6 +23,17 @@ public class TeamJ {
     @OneToMany(mappedBy = "teamJ")
     private List<MemberJ> members = new ArrayList<>();
 
+    public TeamJ() {
+    }
+
+    public TeamJ(String name) {
+        this.name = name;
+    }
+
+    public void subscription(MemberJ member) {
+        this.members.add(member);
+    }
+
     public Long getId() {
         return id;
     }

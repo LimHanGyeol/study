@@ -25,13 +25,28 @@ public class JpqlMain {
             // createNativeQuery(entityManager);
             // createDefaultJpqlAndQueryAPI(entityManager);
 
-            MemberJ member = new MemberJ("Hangyeol", 27);
+            // 프로젝션으로 반환한 객체도 영속성 컨텍스트의 관리 대상이 된다.
+            // entityTypeProjection(entityManager);
+            // embeddedTypeProjection(entityManager);
+            // scalaTypeProjection(entityManager);
+
+            // Paging
+            // List<MemberJ> results = getPagingMember(entityManager);
+
+            // Join
+            // joinQuery(entityManager);
+
+            TeamJ team = new TeamJ("개발팀");
+            entityManager.persist(team);
+
+            MemberJ member = new MemberJ("개발팀", 27);
+            member.joinTeam(team);
             entityManager.persist(member);
 
-            // 프로젝션으로 반환한 객체도 영속성 컨텍스트의 관리 대상이 된다.
-            entityTypeProjection(entityManager);
-            embeddedTypeProjection(entityManager);
-            scalaTypeProjection(entityManager);
+            entityManager.flush();
+            entityManager.clear();
+
+
 
             transaction.commit();
         } catch (Exception e) {
@@ -40,6 +55,23 @@ public class JpqlMain {
             entityManager.close();
         }
         entityManagerFactory.close();
+    }
+
+    private static void joinQuery(EntityManager entityManager) {
+        String innerJoinQuery = "SELECT m FROM MemberJ AS m INNER JOIN m.teamJ AS t";
+        String leftOuterJoinQuery = "SELECT m FROM MemberJ AS m LEFT OUTER JOIN m.teamJ AS t";
+        String leftOuterJoinWithOnQuery = "SELECT m FROM MemberJ AS m LEFT OUTER JOIN m.teamJ AS t ON t.name = '개발팀'";
+        String thetaJoin = "SELECT m FROM MemberJ AS m, TeamJ AS t WHERE m.username = t.name";
+        String thetaJoinWithOnQuery = "SELECT m FROM MemberJ AS m LEFT OUTER JOIN TeamJ AS t ON m.username = t.name";
+        List<MemberJ> results = entityManager.createQuery(thetaJoinWithOnQuery, MemberJ.class)
+                .getResultList();
+    }
+
+    private static List<MemberJ> getPagingMember(EntityManager entityManager) {
+        return entityManager.createQuery("SELECT m FROM MemberJ AS m ORDER BY m.age DESC", MemberJ.class)
+                .setFirstResult(1)
+                .setMaxResults(10)
+                .getResultList();
     }
 
     private static void createDefaultJpqlAndQueryAPI(EntityManager entityManager) {
