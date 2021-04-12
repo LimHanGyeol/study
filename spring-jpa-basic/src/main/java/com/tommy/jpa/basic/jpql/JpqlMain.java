@@ -42,6 +42,9 @@ public class JpqlMain {
             // 조건문 (CASE)
             // jpqlCondition(entityManager);
 
+            // JPQL 기본 함수
+            // defaultJPQL(entityManager);
+
             TeamJ team = new TeamJ("개발팀");
             entityManager.persist(team);
 
@@ -53,6 +56,7 @@ public class JpqlMain {
             entityManager.clear();
 
 
+
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -60,6 +64,17 @@ public class JpqlMain {
             entityManager.close();
         }
         entityManagerFactory.close();
+    }
+
+    private static void defaultJPQL(EntityManager entityManager) {
+        // concat (Hibernate 지원 'a' || 'b')
+        String query = "SELECT CONCAT('A', 'B') FROM MemberJ AS m";
+        // Size (Team의 경우 members 컬렉션의 사이즈를 반환한다.)
+        String sizeQuery = "SELECT SIZE(t.members) FROM TeamJ AS t";
+        List<Integer> retuls = entityManager.createQuery(sizeQuery, Integer.class)
+                .getResultList();
+
+        System.out.println(retuls.toString());
     }
 
     private static void jpqlCondition(EntityManager entityManager) {
