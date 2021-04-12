@@ -26,6 +26,9 @@ public class JpqlMain {
             // 엔티티 직접 사용
             // entity(entityManager, member1);
 
+            // 네임드 쿼리
+            // namedQuery(entityManager);
+
 
             TeamJ teamA = new TeamJ("개발팀");
             entityManager.persist(teamA);
@@ -56,6 +59,16 @@ public class JpqlMain {
             entityManager.close();
         }
         entityManagerFactory.close();
+    }
+
+    private static void namedQuery(EntityManager entityManager) {
+        List<MemberJ> results = entityManager.createNamedQuery("MemberJ.findByUsername", MemberJ.class)
+                .setParameter("username", "회원1")
+                .getResultList();
+
+        for (MemberJ result : results) {
+            System.out.println("result = " + result);
+        }
     }
 
     private static void entity(EntityManager entityManager, MemberJ member1) {
