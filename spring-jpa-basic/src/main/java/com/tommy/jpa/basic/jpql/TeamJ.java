@@ -45,4 +45,12 @@ public class TeamJ {
     public List<MemberJ> getMembers() {
         return members;
     }
+
+    @Override
+    public String toString() {
+        return "TeamJ{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
