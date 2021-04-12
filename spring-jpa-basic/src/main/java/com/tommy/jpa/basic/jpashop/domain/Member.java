@@ -17,6 +17,13 @@ public class Member {
     @Embedded
     private Address address;
 
+    public Member() {
+    }
+
+    public Member(String name) {
+        this.name = name;
+    }
+
     // 보통 주문 Application에서도 주문 테이블의 MEMBER_ID로 통계를 뽑아낸다.
     // 양방향 관계는 권장되지 않지만 실습을 위해 양방향으로 설정 한다.
     @OneToMany(mappedBy = "member")
