@@ -19,12 +19,16 @@ public class MemberJ {
     @JoinColumn(name = "TEAM_ID")
     private TeamJ teamJ;
 
+    @Enumerated(EnumType.STRING)
+    private MemberType memberType;
+
     public MemberJ() {
     }
 
     public MemberJ(String username, int age) {
         this.username = username;
         this.age = age;
+        this.memberType = MemberType.USER;
     }
 
     public void joinTeam(TeamJ team) {

@@ -36,16 +36,21 @@ public class JpqlMain {
             // Join
             // joinQuery(entityManager);
 
+            // ENUM ValueType
+            // jpqlEnum(entityManager);
+
+            // 조건문 (CASE)
+            // jpqlCondition(entityManager);
+
             TeamJ team = new TeamJ("개발팀");
             entityManager.persist(team);
 
-            MemberJ member = new MemberJ("개발팀", 27);
+            MemberJ member = new MemberJ("관리자", 27);
             member.joinTeam(team);
             entityManager.persist(member);
 
             entityManager.flush();
             entityManager.clear();
-
 
 
             transaction.commit();
@@ -55,6 +60,28 @@ public class JpqlMain {
             entityManager.close();
         }
         entityManagerFactory.close();
+    }
+
+    private static void jpqlCondition(EntityManager entityManager) {
+        String query = "SELECT COALESCE(m.username, '이름 없는 회원') FROM MemberJ AS m";
+        String nullifQuery = "SELECT NULLIF(m.username, '관리자') FROM MemberJ AS m";
+        List<String> result = entityManager.createQuery(nullifQuery, String.class)
+                .getResultList();
+
+        System.out.println("result = " + result.toString());
+    }
+
+    private static void jpqlEnum(EntityManager entityManager) {
+        String query = "SELECT m.username, 'HELLO', TRUE FROM MemberJ AS m WHERE m.memberType = :memberType";
+        List<Object[]> results = entityManager.createQuery(query)
+                .setParameter("memberType", MemberType.USER)
+                .getResultList();
+
+        for (Object[] objects : results) {
+            System.out.println("objects = " + objects[0]);
+            System.out.println("objects = " + objects[1]);
+            System.out.println("objects = " + objects[2]);
+        }
     }
 
     private static void joinQuery(EntityManager entityManager) {
