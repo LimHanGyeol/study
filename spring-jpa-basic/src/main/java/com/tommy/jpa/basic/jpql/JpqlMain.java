@@ -51,6 +51,15 @@ public class JpqlMain {
             entityManager.flush();
             entityManager.clear();
 
+            // 벌크 연산은 영속성 컨텍스트를 무시하고 데이터베이스에 직접 쿼리한다.
+            // 1. 벌크 연산을 먼저 수행
+            // 2. 벌크 연산 후 영속성 컨텍스트 초기화
+            // 두 가지 방법 중 하나를 사용해야 한다.
+            int resultCount = entityManager.createQuery("update MemberJ m set m.age = 20")
+                    .executeUpdate();
+
+            System.out.println("resultCount = " + resultCount);
+
 
             transaction.commit();
         } catch (Exception e) {
