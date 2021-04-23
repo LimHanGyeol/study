@@ -1,5 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.member;
 
+import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
+import com.tommy.jpabook.bootjpaapplication.member.domain.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ class MemberRepositoryTest {
 
         // then
         assertThat(findMember.getId()).isEqualTo(savedMemberId);
-        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
+        assertThat(findMember.getName()).isEqualTo(member.getName());
         assertThat(findMember).isEqualTo(member);
     }
 }

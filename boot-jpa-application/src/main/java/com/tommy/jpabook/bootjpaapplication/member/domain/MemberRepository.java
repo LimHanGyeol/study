@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.member;
+package com.tommy.jpabook.bootjpaapplication.member.domain;
 
 import org.springframework.stereotype.Repository;
 
