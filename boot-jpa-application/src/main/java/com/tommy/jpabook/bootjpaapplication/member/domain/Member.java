@@ -30,4 +30,8 @@ public class Member {
     public Member(String name) {
         this.name = name;
     }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
 }
