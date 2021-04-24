@@ -1,6 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.item;
 
 import com.tommy.jpabook.bootjpaapplication.category.Category;
+import com.tommy.jpabook.bootjpaapplication.item.exception.NotEnoughStockException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.List;
 @Entity
 public abstract class Item {
 
+    private static final int DEFAULT_STOCK = 0;
+
     @Id
     @GeneratedValue
     @Column(name = "item_id")
@@ -28,4 +31,15 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<>();
 
+    public void addStockQuantity(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    public void removeStockQuantity(int quantity) {
+        int resultStockQuantity = this.stockQuantity - quantity;
+        if (resultStockQuantity < DEFAULT_STOCK) {
+            throw new NotEnoughStockException();
+        }
+        this.stockQuantity = resultStockQuantity;
+    }
 }
