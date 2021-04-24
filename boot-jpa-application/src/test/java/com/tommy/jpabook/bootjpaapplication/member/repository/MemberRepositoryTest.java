@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.member;
+package com.tommy.jpabook.bootjpaapplication.member.repository;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
 import com.tommy.jpabook.bootjpaapplication.member.domain.MemberRepository;
