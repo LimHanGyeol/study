@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.item;
+package com.tommy.jpabook.bootjpaapplication.item.domain;
 
 import lombok.Getter;
 

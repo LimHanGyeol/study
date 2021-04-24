@@ -1,6 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.order;
 
-import com.tommy.jpabook.bootjpaapplication.item.Item;
+import com.tommy.jpabook.bootjpaapplication.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

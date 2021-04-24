@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.item;
+package com.tommy.jpabook.bootjpaapplication.item.domain;
 
 import com.tommy.jpabook.bootjpaapplication.category.Category;
 import com.tommy.jpabook.bootjpaapplication.item.exception.NotEnoughStockException;
