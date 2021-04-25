@@ -30,4 +30,8 @@ public class Delivery {
     public void ofOrder(Order order) {
         this.order = order;
     }
+
+    public boolean checkStatus(DeliveryStatus deliveryStatus) {
+        return this.status.equals(deliveryStatus);
+    }
 }
