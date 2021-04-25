@@ -1,7 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.delivery;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
-import com.tommy.jpabook.bootjpaapplication.order.Order;
+import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

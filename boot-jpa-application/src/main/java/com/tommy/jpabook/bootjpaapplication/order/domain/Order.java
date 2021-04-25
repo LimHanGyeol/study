@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.order;
+package com.tommy.jpabook.bootjpaapplication.order.domain;
 
 import com.tommy.jpabook.bootjpaapplication.delivery.Delivery;
 import com.tommy.jpabook.bootjpaapplication.delivery.DeliveryStatus;
