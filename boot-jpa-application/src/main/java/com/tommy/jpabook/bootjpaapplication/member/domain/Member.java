@@ -1,6 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.member.domain;
 
-import com.tommy.jpabook.bootjpaapplication.order.Order;
+import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +27,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
-    public Member(String name) {
+    public Member(String name, Address address) {
         this.name = name;
+        this.address = address;
     }
 
     public void addOrder(Order order) {

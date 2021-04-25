@@ -1,7 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.delivery;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
-import com.tommy.jpabook.bootjpaapplication.order.Order;
+import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,16 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status; // READY, COMP
 
+    public Delivery(Address address) {
+        this.address = address;
+        this.status = DeliveryStatus.READY;
+    }
+
     public void ofOrder(Order order) {
         this.order = order;
+    }
+
+    public boolean checkStatus(DeliveryStatus deliveryStatus) {
+        return this.status.equals(deliveryStatus);
     }
 }
