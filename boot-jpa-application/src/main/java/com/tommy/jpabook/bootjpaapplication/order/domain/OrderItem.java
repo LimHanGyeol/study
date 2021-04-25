@@ -28,7 +28,7 @@ public class OrderItem {
     private int orderPrice;
     private int count;
 
-    public OrderItem(Item item, int orderPrice, int count) {
+    private OrderItem(Item item, int orderPrice, int count) {
         this.item = item;
         this.orderPrice = orderPrice;
         this.count = count;
