@@ -36,8 +36,14 @@ public class OrderService {
     }
 
     public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId);
+        Order order = findById(orderId);
         order.cancelOrder();
+    }
+
+    @Transactional(readOnly = true)
+    public Order findById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다. 다시 한번 확인해주세요."));
     }
 
     // TODO : 검색 기능

@@ -1,7 +1,9 @@
 package com.tommy.jpabook.bootjpaapplication.member.service;
 
+import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
 import com.tommy.jpabook.bootjpaapplication.member.domain.MemberRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,18 @@ class MemberServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    private Address address;
+
+    @BeforeEach
+    void setUp() {
+        address = new Address("서울", "테헤란로", "12338");
+    }
+
     @Test
     @DisplayName("회원 가입")
     void register() {
         // given
-        Member member = new Member("hangyeol");
+        Member member = new Member("hangyeol", address);
 
         // when
         Long savedMemberId = memberService.register(member);
@@ -41,8 +50,8 @@ class MemberServiceTest {
     @DisplayName("회원 이름이 존재할 경우 예외 발생")
     void validateDuplicateMember() {
         // given
-        Member member1 = new Member("tommy");
-        Member member2 = new Member("tommy");
+        Member member1 = new Member("tommy", address);
+        Member member2 = new Member("tommy", address);
 
         memberService.register(member1);
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 @Repository
 public class OrderRepository {
@@ -16,7 +17,7 @@ public class OrderRepository {
         return order.getId();
     }
 
-    public Order findById(Long id) {
-        return entityManager.find(Order.class, id);
+    public Optional<Order> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Order.class, id));
     }
 }

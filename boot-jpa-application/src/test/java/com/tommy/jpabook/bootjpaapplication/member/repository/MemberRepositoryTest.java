@@ -1,5 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.member.repository;
 
+import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
 import com.tommy.jpabook.bootjpaapplication.member.domain.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,7 @@ class MemberRepositoryTest {
     @Rollback(value = false)
     void testMember() {
         // given
-        Member member = new Member("hangyeol");
+        Member member = new Member("limhangyeol", new Address("서울", "테헤란로", "12338"));
 
         // when
         Long savedMemberId = memberRepository.save(member);
