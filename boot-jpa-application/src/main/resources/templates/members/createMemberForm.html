@@ -15,7 +15,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 
-    <form role="form" action="/members/new" th:object="${memberRegisterRequest}" method="post">
+    <form role="form" action="/members/new" th:object="${memberRequest}" method="post">
         <div class="form-group">
             <label th:for="name">이름</label>
                 <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"

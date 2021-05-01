@@ -2,7 +2,7 @@ package com.tommy.jpabook.bootjpaapplication.web;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
-import com.tommy.jpabook.bootjpaapplication.member.dto.MemberRegisterRequest;
+import com.tommy.jpabook.bootjpaapplication.member.dto.MemberRequest;
 import com.tommy.jpabook.bootjpaapplication.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -22,18 +22,18 @@ public class MemberPageController {
 
     @GetMapping("/members/new")
     public String createForm(Model model) {
-        model.addAttribute("memberRegisterRequest", new MemberRegisterRequest());
+        model.addAttribute("memberRequest", new MemberRequest());
         return "members/createMemberForm";
     }
 
     @PostMapping("/members/new")
-    public String create(@Valid MemberRegisterRequest memberRegisterRequest, BindingResult result) {
+    public String create(@Valid MemberRequest memberRequest, BindingResult result) {
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
-        Address address = new Address(memberRegisterRequest.getCity(), memberRegisterRequest.getStreet(), memberRegisterRequest.getZipcode());
+        Address address = new Address(memberRequest.getCity(), memberRequest.getStreet(), memberRequest.getZipcode());
 
-        Member member = new Member(memberRegisterRequest.getName(), address);
+        Member member = new Member(memberRequest.getName(), address);
         memberService.register(member);
 
         return "redirect:/";
