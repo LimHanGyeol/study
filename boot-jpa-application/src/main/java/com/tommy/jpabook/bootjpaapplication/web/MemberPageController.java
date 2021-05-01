@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
 @RequiredArgsConstructor
+@Controller
 public class MemberPageController {
 
     private final MemberService memberService;

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
-@Controller
 @RequiredArgsConstructor
+@Controller
 public class ItemPageController {
 
     private final ItemService itemService;
