@@ -1,6 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.web;
 
 import com.tommy.jpabook.bootjpaapplication.item.domain.Book;
+import com.tommy.jpabook.bootjpaapplication.item.domain.Item;
 import com.tommy.jpabook.bootjpaapplication.item.dto.BookRequest;
 import com.tommy.jpabook.bootjpaapplication.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,5 +36,12 @@ public class ItemPageController {
 
         itemService.saveItem(book);
         return "redirect:/";
+    }
+
+    @GetMapping("/items")
+    public String list(Model model) {
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
+        return "items/itemList";
     }
 }
