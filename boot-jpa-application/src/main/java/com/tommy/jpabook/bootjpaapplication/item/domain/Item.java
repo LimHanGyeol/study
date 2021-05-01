@@ -48,6 +48,10 @@ public abstract class Item {
         this.stockQuantity += quantity;
     }
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
     public void removeStockQuantity(int quantity) {
         int resultStockQuantity = this.stockQuantity - quantity;
         if (resultStockQuantity < DEFAULT_STOCK) {
