@@ -31,6 +31,13 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<>();
 
+    public Item(Long id, String name, int price, int stockQuantity) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
+
     public Item(String name, int price, int stockQuantity) {
         this.name = name;
         this.price = price;
@@ -39,6 +46,10 @@ public abstract class Item {
 
     public void addStockQuantity(int quantity) {
         this.stockQuantity += quantity;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
     }
 
     public void removeStockQuantity(int quantity) {

@@ -18,6 +18,8 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
 
+    private static final String INVALID_CANCEL_ORDER = "이미 출고 완료된 상품은 주문 취소가 불가능 합니다.";
+
     @Id
     @GeneratedValue
     @Column(name = "order_id")
@@ -39,19 +41,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태 : ORDER, CANCEL
 
-    public Order(Member member, Delivery delivery, LocalDateTime orderDate, OrderStatus status) {
-        this.member = member;
-        this.delivery = delivery;
+    public Order(LocalDateTime orderDate, OrderStatus status) {
         this.orderDate = orderDate;
         this.status = status;
     }
 
-    // 가변인자를 List로 바꿀 방법을 고려해보기
-    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
-        Order order = new Order(member, delivery, LocalDateTime.now(), OrderStatus.ORDER);
-        for (OrderItem orderItem : orderItems) {
-            order.addOrderItem(orderItem);
-        }
+    public static Order createOrder(List<OrderItem> orderItems) {
+        Order order = new Order(LocalDateTime.now(), OrderStatus.ORDER);
+        orderItems.forEach(order::addOrderItem);
         return order;
     }
 
@@ -72,7 +69,7 @@ public class Order {
 
     public void cancelOrder() {
         if (delivery.checkStatus(DeliveryStatus.COMP)) {
-            throw new IllegalStateException("이미 완료된 상품은 취소가 불가능 합니다.");
+            throw new IllegalStateException(INVALID_CANCEL_ORDER);
         }
         this.status = OrderStatus.CANCEL;
         for (OrderItem orderItem : orderItems) {

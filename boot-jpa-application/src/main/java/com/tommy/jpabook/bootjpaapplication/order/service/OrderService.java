@@ -8,9 +8,12 @@ import com.tommy.jpabook.bootjpaapplication.member.service.MemberService;
 import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderItem;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderRepository;
+import com.tommy.jpabook.bootjpaapplication.order.domain.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -26,10 +29,11 @@ public class OrderService {
         Item item = itemService.findById(itemId);
 
         Delivery delivery = new Delivery(member.getAddress());
-
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
 
-        Order order = Order.createOrder(member, delivery, orderItem);
+        Order order = Order.createOrder(List.of(orderItem));
+        order.orderedMember(member);
+        order.requestDelivery(delivery);
 
         orderRepository.save(order);
         return order.getId();
@@ -40,11 +44,13 @@ public class OrderService {
         order.cancelOrder();
     }
 
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByString(orderSearch);
+    }
+
     @Transactional(readOnly = true)
     public Order findById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 주문 정보입니다. 다시 한번 확인해주세요."));
     }
-
-    // TODO : 검색 기능
 }
