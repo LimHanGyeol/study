@@ -1,6 +1,7 @@
 package com.tommy.securityform.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,5 +20,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // and() 로 체이닝을 하지 않을 수도 있다.
         http.formLogin(); // 그리고 폼 로그인을 사용할 것이다.
         http.httpBasic(); // 그리고 httpBasic 도 사용한다.
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication() // 원하는 유저정보를 임의로 설정할 수 있다.
+                .withUser("hangyeol").password("{noop}123").roles("USER")
+                .and()  // noop 은 시큐리티 5부터 사용되는 기본 패스워드 인코더이다.
+                .withUser("admin").password("{noop}!@#").roles("ADMIN");
     }
 }
