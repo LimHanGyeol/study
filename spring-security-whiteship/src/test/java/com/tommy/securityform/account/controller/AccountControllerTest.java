@@ -40,7 +40,6 @@ class AccountControllerTest {
     @Autowired
     private AccountService accountService;
 
-
     @Test
     @DisplayName("익명으로 index 페이지 접근 - 코드 접근")
     void index_anonymousV1() throws Exception {
