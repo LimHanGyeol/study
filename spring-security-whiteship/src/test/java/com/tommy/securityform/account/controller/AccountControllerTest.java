@@ -1,6 +1,8 @@
 package com.tommy.securityform.account.controller;
 
 import com.tommy.securityform.WithUser;
+import com.tommy.securityform.account.domain.Account;
+import com.tommy.securityform.account.service.AccountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +11,35 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * DB에 접근하는 테스트를 작성할 경우 영속성 컨텍스트의 1차 캐시로 인해,
+ * createUser 의 작동이 불완전할 수 있다.
+ * Test 이후 롤백할 의도로 Transaction을 설정하자.
+ */
 @AutoConfigureMockMvc
 @SpringBootTest
 class AccountControllerTest {
 
+    private static final String USERNAME = "hangyeol";
+    private static final String PASSWORD = "123";
+
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AccountService accountService;
+
 
     @Test
     @DisplayName("익명으로 index 페이지 접근 - 코드 접근")
@@ -83,5 +101,25 @@ class AccountControllerTest {
         mockMvc.perform(get("/admin"))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void login_success() throws Exception {
+        Account user = createUser(USERNAME, PASSWORD);
+        mockMvc.perform(formLogin().user(user.getUsername()).password(PASSWORD))
+                .andExpect(authenticated());
+    }
+
+    @Test
+    @Transactional
+    void login_fail() throws Exception {
+        Account user = createUser(USERNAME, PASSWORD);
+        mockMvc.perform(formLogin().user(user.getUsername()).password("12345"))
+                .andExpect(unauthenticated());
+    }
+
+    private Account createUser(String username, String password) {
+        return accountService.createAccount(username, password, "USER");
     }
 }
