@@ -1,10 +1,13 @@
 package com.tommy.securityform.auth;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -28,5 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("hangyeol").password("{noop}123").roles("USER")
                 .and()  // noop 은 시큐리티 5부터 사용되는 기본 패스워드 인코더이다.
                 .withUser("admin").password("{noop}!@#").roles("ADMIN");
+    }
+
+    @Bean // default : bcrypt
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
