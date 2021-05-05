@@ -19,10 +19,10 @@ public class AccountController {
     /**
      * 매우 간소화한 회원가입 핸들러이다. 이렇게 사용하지 말자.
      */
-    @GetMapping("/account/{role}/{username}/{password}")
-    public ResponseEntity<Account> createAccount(@PathVariable String role,
-                                                 @PathVariable String username,
-                                                 @PathVariable String password) {
+    @GetMapping("/account/{username}/{password}/{role}")
+    public ResponseEntity<Account> createAccount(@PathVariable String username,
+                                                 @PathVariable String password,
+                                                 @PathVariable String role) {
         Account savedAccount = accountService.createAccount(username, password, role);
         return ResponseEntity.ok().body(savedAccount);
     }
