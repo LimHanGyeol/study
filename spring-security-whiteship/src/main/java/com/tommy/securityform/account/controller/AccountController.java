@@ -23,7 +23,7 @@ public class AccountController {
     public ResponseEntity<Account> createAccount(@PathVariable String role,
                                                  @PathVariable String username,
                                                  @PathVariable String password) {
-        Account savedAccount = accountService.createAccount(role, username, password);
+        Account savedAccount = accountService.createAccount(username, password, role);
         return ResponseEntity.ok().body(savedAccount);
     }
 }
