@@ -1,4 +1,4 @@
-package com.tommy.securityform;
+package com.tommy.securityform.auth;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
