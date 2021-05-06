@@ -1,6 +1,5 @@
 package com.tommy.securityform.auth;
 
-import com.tommy.securityform.account.service.AccountService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +18,6 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private final AccountService accountService;
-
-    public SecurityConfig(AccountService accountService) {
-        this.accountService = accountService;
-    }
 
     public SecurityExpressionHandler<FilterInvocation> expressionHandler() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
@@ -61,15 +54,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login") // 이 필터를 추가하면 DefaultLogin/LogoutPageGeneratingFilter가 빠진다.
                 .permitAll();
 
+//        http.rememberMe()
+//                .userDetailsService(accountService)
+//                .key("remember-me-sample");
+
         http.httpBasic(); // 그리고 httpBasic 도 사용한다.
+
         http.logout().logoutSuccessUrl("/");
 
         http.exceptionHandling()
                 .accessDeniedHandler(new FormAccessDeniedHandler());
-
-        http.rememberMe()
-                .userDetailsService(accountService)
-                .key("remember-me-sample");
     }
 
     @Bean // default : bcrypt
