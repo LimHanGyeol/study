@@ -45,8 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .expressionHandler(expressionHandler());
 
         // and() 로 체이닝을 하지 않을 수도 있다.
-        http.formLogin(); // 그리고 폼 로그인을 사용할 것이다.
+        http.formLogin() // 그리고 폼 로그인을 사용할 것이다.
+                .loginPage("/login") // 이 필터를 추가하면 DefaultLogin/LogoutPageGeneratingFilter가 빠진다.
+                .permitAll();
+
         http.httpBasic(); // 그리고 httpBasic 도 사용한다.
+        http.logout().logoutSuccessUrl("/");
     }
 
     @Bean // default : bcrypt
