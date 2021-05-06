@@ -2,7 +2,7 @@ package com.tommy.securityform.account.service;
 
 import com.tommy.securityform.account.domain.Account;
 import com.tommy.securityform.account.domain.AccountRepository;
-import org.springframework.security.core.userdetails.User;
+import com.tommy.securityform.account.domain.UserAccount;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,11 +32,7 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return User.builder()
-                .username(account.getUsername())
-                .password(account.getPassword())
-                .roles(account.getRole())
-                .build();
+        return new UserAccount(account);
     }
 
     public Account createAccount(Account account) {

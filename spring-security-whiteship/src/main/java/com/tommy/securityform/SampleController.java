@@ -2,7 +2,9 @@ package com.tommy.securityform;
 
 import com.tommy.securityform.account.domain.Account;
 import com.tommy.securityform.account.domain.AccountRepository;
+import com.tommy.securityform.account.domain.UserAccount;
 import com.tommy.securityform.account.utils.AccountContext;
+import com.tommy.securityform.auth.CurrentUser;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +24,11 @@ public class SampleController {
     }
 
     @GetMapping("/")
-    public String index(Model model, Principal principal) {
-        if (principal == null) {
+    public String index(Model model, @CurrentUser UserAccount account) {
+        if (account == null) {
             model.addAttribute("message", "Hello Spring Security");
         } else {
-            model.addAttribute("message", "Hello " + principal.getName());
+            model.addAttribute("message", "Hello " + account.getUsername());
         }
         return "index";
     }
