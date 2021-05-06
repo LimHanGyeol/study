@@ -1,5 +1,6 @@
 package com.tommy.securityform.auth;
 
+import com.tommy.securityform.FormAccessDeniedHandler;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.httpBasic(); // 그리고 httpBasic 도 사용한다.
         http.logout().logoutSuccessUrl("/");
+
+        http.exceptionHandling()
+                .accessDeniedHandler(new FormAccessDeniedHandler());
     }
 
     @Bean // default : bcrypt
