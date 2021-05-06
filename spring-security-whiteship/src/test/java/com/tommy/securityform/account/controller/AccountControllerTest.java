@@ -119,6 +119,7 @@ class AccountControllerTest {
     }
 
     private Account createUser(String username, String password) {
-        return accountService.createAccount(username, password, "USER");
+        Account account = new Account(username, password, "USER");
+        return accountService.createAccount(account);
     }
 }

@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers("/", "/info", "/account/**").permitAll() // "/", "/info" 로 오는 요청은 인증을 거치지 않아도 상관 없다.
+                .mvcMatchers("/", "/info", "/account/**", "/signup").permitAll() // "/", "/info" 로 오는 요청은 인증을 거치지 않아도 상관 없다.
                 .mvcMatchers("/admin").hasRole("ADMIN") // "/admin" 은 ADMIN 권한이 있어야 접근 가능하다.
                 .mvcMatchers("/user").hasRole("USER")
                 .anyRequest().authenticated() // 기타 등등에 대한 요청들은 인증만 하면 접근이 가능하다.

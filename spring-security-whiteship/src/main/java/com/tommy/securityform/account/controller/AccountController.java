@@ -4,7 +4,7 @@ import com.tommy.securityform.account.domain.Account;
 import com.tommy.securityform.account.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,10 +20,8 @@ public class AccountController {
      * 매우 간소화한 회원가입 핸들러이다. 이렇게 사용하지 말자.
      */
     @GetMapping("/account/{username}/{password}/{role}")
-    public ResponseEntity<Account> createAccount(@PathVariable String username,
-                                                 @PathVariable String password,
-                                                 @PathVariable String role) {
-        Account savedAccount = accountService.createAccount(username, password, role);
+    public ResponseEntity<Account> createAccount(@ModelAttribute Account account) {
+        Account savedAccount = accountService.createAccount(account);
         return ResponseEntity.ok().body(savedAccount);
     }
 }

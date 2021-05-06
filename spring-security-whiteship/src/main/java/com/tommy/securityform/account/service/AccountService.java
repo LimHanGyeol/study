@@ -39,8 +39,7 @@ public class AccountService implements UserDetailsService {
                 .build();
     }
 
-    public Account createAccount(String username, String password, String role) {
-        Account account = new Account(username, password, role);
+    public Account createAccount(Account account) {
         account.encodePassword(passwordEncoder);
         return accountRepository.save(account);
     }
