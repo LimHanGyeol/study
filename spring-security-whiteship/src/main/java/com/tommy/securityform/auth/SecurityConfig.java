@@ -41,9 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers("/", "/info", "/account/**", "/signup").permitAll() // "/", "/info" 로 오는 요청은 인증을 거치지 않아도 상관 없다.
                 .mvcMatchers("/admin").hasRole("ADMIN") // "/admin" 은 ADMIN 권한이 있어야 접근 가능하다.
-                .mvcMatchers("/user").hasRole("USER")
+                .mvcMatchers("/user").hasAuthority("ROLE_USER") // hasAuthority가 hasRole의 상위 개념이다. hasAuthority를 사용하면 ROLE_까지 명시해야 한다.
                 .anyRequest().authenticated() // 기타 등등에 대한 요청들은 인증만 하면 접근이 가능하다.
                 .expressionHandler(expressionHandler());
+                // .anonymous 로 익명 사용자에게만 허용할 수 있다.
+
 
         // and() 로 체이닝을 하지 않을 수도 있다.
         http.formLogin() // 그리고 폼 로그인을 사용할 것이다.
