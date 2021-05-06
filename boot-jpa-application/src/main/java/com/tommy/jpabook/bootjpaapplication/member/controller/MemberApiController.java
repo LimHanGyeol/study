@@ -1,22 +1,36 @@
 package com.tommy.jpabook.bootjpaapplication.member.controller;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
-import com.tommy.jpabook.bootjpaapplication.member.dto.CreateMemberRequest;
-import com.tommy.jpabook.bootjpaapplication.member.dto.CreateMemberResponse;
-import com.tommy.jpabook.bootjpaapplication.member.dto.UpdateMemberRequest;
-import com.tommy.jpabook.bootjpaapplication.member.dto.UpdateMemberResponse;
+import com.tommy.jpabook.bootjpaapplication.member.dto.*;
 import com.tommy.jpabook.bootjpaapplication.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
 public class MemberApiController {
 
     private final MemberService memberService;
+
+    @GetMapping(value = "/api/v1/members")
+    public List<Member> findMembers() {
+        return memberService.findMembers();
+    }
+
+    @GetMapping(value = "/api/v2/members")
+    public Result<List<ReadMemberResponse>> findMembersV2() {
+        List<Member> findMembers = memberService.findMembers();
+        List<ReadMemberResponse> memberResponses = findMembers.stream()
+                .map(member -> new ReadMemberResponse(member.getName()))
+                .collect(Collectors.toList());
+
+        return new Result<>(memberResponses);
+    }
 
     @PostMapping(value = "/api/v1/members", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
