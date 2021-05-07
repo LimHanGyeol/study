@@ -31,4 +31,13 @@ public class OrderApiController {
                 .collect(Collectors.toList());
         return orderResponses;
     }
+
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderResponse> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderResponse> orderResponses = orders.stream()
+                .map(SimpleOrderResponse::new)
+                .collect(Collectors.toList());
+        return orderResponses;
+    }
 }
