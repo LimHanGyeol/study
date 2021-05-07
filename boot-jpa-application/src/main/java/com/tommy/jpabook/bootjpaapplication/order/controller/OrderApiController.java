@@ -4,6 +4,7 @@ import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderItem;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderRepository;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderSearch;
+import com.tommy.jpabook.bootjpaapplication.order.dto.OrderResponse;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderResponse;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +60,14 @@ public class OrderApiController {
             orderItems.forEach(orderItem -> orderItem.getItem().getName());
         }
         return orders;
+    }
+
+    @GetMapping("/api/v2/orders")
+    public List<OrderResponse> orderItemsV2() {
+        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        List<OrderResponse> orderResponses = orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
+        return orderResponses;
     }
 }

@@ -50,4 +50,8 @@ public class OrderItem {
     public int getTotalPrice() {
         return orderPrice * count;
     }
+
+    public String getItemName() {
+        return item.getName();
+    }
 }
