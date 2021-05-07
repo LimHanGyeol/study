@@ -1,5 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.order.domain;
 
+import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -76,6 +77,15 @@ public class OrderRepository {
                 "SELECT o FROM Order  o" +
                         " JOIN FETCH o.member m" +
                         " JOIN FETCH o.delivery d", Order.class
+        ).getResultList();
+    }
+
+    public List<SimpleOrderQueryDto> findOrderDtos() {
+        return entityManager.createQuery(
+                "SELECT NEW com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto(o.id, m.name, o.orderDate, o.status, m.address) " +
+                        " FROM Order o " +
+                        " JOIN o.member m " +
+                        " JOIN o.delivery d", SimpleOrderQueryDto.class
         ).getResultList();
     }
 }

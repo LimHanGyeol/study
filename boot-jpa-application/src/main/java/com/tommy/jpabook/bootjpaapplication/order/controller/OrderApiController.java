@@ -3,6 +3,7 @@ package com.tommy.jpabook.bootjpaapplication.order.controller;
 import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderRepository;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderSearch;
+import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,5 +40,10 @@ public class OrderApiController {
                 .map(SimpleOrderResponse::new)
                 .collect(Collectors.toList());
         return orderResponses;
+    }
+
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderQueryDto> ordersV4() {
+        return orderRepository.findOrderDtos();
     }
 }
