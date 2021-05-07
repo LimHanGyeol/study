@@ -1,6 +1,7 @@
 package com.tommy.jpabook.bootjpaapplication.order.controller;
 
 import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
+import com.tommy.jpabook.bootjpaapplication.order.domain.OrderItem;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderRepository;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderSearch;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
@@ -45,5 +46,18 @@ public class OrderApiController {
     @GetMapping("/api/v4/simple-orders")
     public List<SimpleOrderQueryDto> ordersV4() {
         return orderRepository.findOrderDtos();
+    }
+
+    @GetMapping("/api/v1/orders")
+    public List<Order> orderItemsV1() {
+        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        for (Order order : orders) {
+            order.getOrderedMemberName();
+            order.getDeliveryAddress();
+
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.forEach(orderItem -> orderItem.getItem().getName());
+        }
+        return orders;
     }
 }
