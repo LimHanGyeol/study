@@ -2,6 +2,7 @@ package com.tommy.jpabook.bootjpaapplication.order.domain;
 
 import com.tommy.jpabook.bootjpaapplication.delivery.Delivery;
 import com.tommy.jpabook.bootjpaapplication.delivery.DeliveryStatus;
+import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
 import com.tommy.jpabook.bootjpaapplication.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -81,5 +82,13 @@ public class Order {
         return orderItems.stream()
                 .mapToInt(OrderItem::getTotalPrice)
                 .sum();
+    }
+
+    public Address getDeliveryAddress() {
+        return delivery.getAddress();
+    }
+
+    public String getOrderedMemberName() {
+        return member.getName();
     }
 }
