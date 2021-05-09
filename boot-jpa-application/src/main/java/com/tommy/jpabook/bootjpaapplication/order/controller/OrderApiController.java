@@ -1,10 +1,12 @@
 package com.tommy.jpabook.bootjpaapplication.order.controller;
 
 import com.tommy.jpabook.bootjpaapplication.order.domain.*;
-import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.OrderResponse;
-import com.tommy.jpabook.bootjpaapplication.order.dto.query.SimpleOrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderResponse;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderFlatDto;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderItemQueryDto;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderQueryDto;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.SimpleOrderQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,5 +100,17 @@ public class OrderApiController {
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> orderItemsV5() {
         return orderQueryRepository.findAllByDto_optimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderQueryDto> orderItemsV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+        return flats.stream()
+                .collect(Collectors.groupingBy(orderFlatDto -> new OrderQueryDto(orderFlatDto.getOrderId(), orderFlatDto.getName(), orderFlatDto.getOrderDate(), orderFlatDto.getOrderStatus(), orderFlatDto.getAddress()),
+                        Collectors.mapping(orderFlatDto -> new OrderItemQueryDto(orderFlatDto.getOrderId(), orderFlatDto.getItemName(), orderFlatDto.getOrderPrice(), orderFlatDto.getCount()), Collectors.toList())
+                )).entrySet().stream()
+                .map(entry -> new OrderQueryDto(entry.getKey().getOrderId(), entry.getKey().getName(), entry.getKey().getOrderDate(), entry.getKey().getOrderStatus(), entry.getKey().getAddress(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

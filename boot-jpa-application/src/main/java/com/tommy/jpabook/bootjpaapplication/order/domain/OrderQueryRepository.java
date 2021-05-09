@@ -1,5 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.order.domain;
 
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderFlatDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderItemQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderQueryDto;
 import lombok.RequiredArgsConstructor;
@@ -76,5 +77,17 @@ public class OrderQueryRepository {
         return results.stream()
                 .map(OrderQueryDto::getOrderId)
                 .collect(Collectors.toList());
+    }
+
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return entityManager.createQuery(
+                "SELECT NEW " +
+                        " com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                        " FROM Order o " +
+                        " JOIN o.member m " +
+                        " JOIN o.delivery d " +
+                        " JOIN o.orderItems oi " +
+                        " JOIN oi.item i", OrderFlatDto.class)
+                .getResultList();
     }
 }
