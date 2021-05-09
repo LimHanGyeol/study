@@ -70,4 +70,13 @@ public class OrderApiController {
                 .collect(Collectors.toList());
         return orderResponses;
     }
+
+    @GetMapping("/api/v3/orders")
+    public List<OrderResponse> orderItemsV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderResponse> orderResponses = orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
+        return orderResponses;
+    }
 }
