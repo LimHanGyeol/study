@@ -80,6 +80,16 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return entityManager.createQuery(
+                "SELECT o FROM Order  o" +
+                        " JOIN FETCH o.member m" +
+                        " JOIN FETCH o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
     public List<SimpleOrderQueryDto> findOrderDtos() {
         return entityManager.createQuery(
                 "SELECT NEW com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto(o.id, m.name, o.orderDate, o.status, m.address) " +
