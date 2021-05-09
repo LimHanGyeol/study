@@ -1,11 +1,9 @@
 package com.tommy.jpabook.bootjpaapplication.order.controller;
 
-import com.tommy.jpabook.bootjpaapplication.order.domain.Order;
-import com.tommy.jpabook.bootjpaapplication.order.domain.OrderItem;
-import com.tommy.jpabook.bootjpaapplication.order.domain.OrderRepository;
-import com.tommy.jpabook.bootjpaapplication.order.domain.OrderSearch;
+import com.tommy.jpabook.bootjpaapplication.order.domain.*;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.OrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.OrderResponse;
-import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.SimpleOrderQueryDto;
 import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v2/simple-orders")
     public List<SimpleOrderResponse> ordersV2() {
@@ -89,5 +88,10 @@ public class OrderApiController {
                 .map(OrderResponse::new)
                 .collect(Collectors.toList());
         return orderResponses;
+    }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> orderItemsV4() {
+        return orderQueryRepository.findOrderQueryDtos();
     }
 }

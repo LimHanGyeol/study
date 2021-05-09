@@ -1,6 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.order.domain;
 
-import com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto;
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.SimpleOrderQueryDto;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 

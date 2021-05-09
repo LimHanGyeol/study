@@ -1,4 +1,4 @@
-package com.tommy.jpabook.bootjpaapplication.order.dto;
+package com.tommy.jpabook.bootjpaapplication.order.dto.query;
 
 import com.tommy.jpabook.bootjpaapplication.member.domain.Address;
 import com.tommy.jpabook.bootjpaapplication.order.domain.OrderStatus;
