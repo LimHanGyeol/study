@@ -5,11 +5,13 @@ import com.tommy.jpabook.bootjpaapplication.item.exception.NotEnoughStockExcepti
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@BatchSize(size = 100) // ToOne 일 경우 전역에다가 BatchSize를 적용할 수 있다.
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

@@ -1,5 +1,6 @@
 package com.tommy.jpabook.bootjpaapplication.order.domain;
 
+import com.tommy.jpabook.bootjpaapplication.order.dto.query.SimpleOrderQueryDto;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -69,5 +70,42 @@ public class OrderRepository {
         }
 
         return query.getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery() {
+        return entityManager.createQuery(
+                "SELECT o FROM Order  o" +
+                        " JOIN FETCH o.member m" +
+                        " JOIN FETCH o.delivery d", Order.class
+        ).getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return entityManager.createQuery(
+                "SELECT o FROM Order  o" +
+                        " JOIN FETCH o.member m" +
+                        " JOIN FETCH o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    public List<SimpleOrderQueryDto> findOrderDtos() {
+        return entityManager.createQuery(
+                "SELECT NEW com.tommy.jpabook.bootjpaapplication.order.dto.SimpleOrderQueryDto(o.id, m.name, o.orderDate, o.status, m.address) " +
+                        " FROM Order o " +
+                        " JOIN o.member m " +
+                        " JOIN o.delivery d", SimpleOrderQueryDto.class
+        ).getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+        return entityManager.createQuery(
+                "SELECT DISTINCT o FROM Order o " +
+                        " JOIN FETCH o.member m " +
+                        " JOIN FETCH o.delivery d " +
+                        " JOIN FETCH o.orderItems oi " +
+                        " JOIN FETCH oi.item i", Order.class
+        ).getResultList();
     }
 }

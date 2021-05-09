@@ -14,8 +14,7 @@ import java.util.List;
 @Entity
 public class Member {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
 
@@ -27,9 +26,17 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    public Member(String name) {
+        this.name = name;
+    }
+
     public Member(String name, Address address) {
         this.name = name;
         this.address = address;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
     }
 
     public void addOrder(Order order) {

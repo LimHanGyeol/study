@@ -1,12 +1,14 @@
 package com.tommy.jpabook.bootjpaapplication.order.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class OrderSearch {
 
-    private final String memberName;
-    private final OrderStatus orderStatus;
+    private String memberName;
+    private OrderStatus orderStatus;
 
     public OrderSearch(String memberName, OrderStatus orderStatus) {
         this.memberName = memberName;
