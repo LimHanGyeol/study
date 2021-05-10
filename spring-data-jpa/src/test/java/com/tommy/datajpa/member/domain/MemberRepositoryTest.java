@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +18,7 @@ class MemberRepositoryTest {
 
     private static final Member MEMBER_HANGYEOL = new Member("hangyeol", 27);
     private static final Member MEMBER_TOMMY = new Member("tommy", 10);
-    
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -133,5 +134,21 @@ class MemberRepositoryTest {
 
         // then
         assertThat(result).hasSize(2);
+    }
+
+    @Test
+    void returnType() {
+        // given
+        memberRepository.save(MEMBER_HANGYEOL);
+        memberRepository.save(MEMBER_TOMMY);
+
+        // when
+        // Collection의 경우 유효하지 않은 파라미터를 전달하면 EmptyCollection을 반환한다. 방어코드를 쓸 필요가 없다.
+        List<Member> members = memberRepository.findListByUsername("tommy");
+        // 단건 조회의 경우 DB에서 조회할 때 데이터가 있을 수도 있고, 없을 수도 있는 상황이라면 Optional을 쓰자.
+        // 단건 조회를 하는데 결과가 n개일 경우 Exception이 발생한다.
+        // JPA의 Exception을 Spring이 감싸 IncorrectResultSizeDataAccessException 등.. 추상화된 예외가 발생한다.
+        Member findMember = memberRepository.findMemberByUsername("hangyeol");
+        Member optionalMember = memberRepository.findOptionalByUsername("tommy").orElseThrow();
     }
 }
