@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MemberJpaRepository {
@@ -16,7 +18,28 @@ public class MemberJpaRepository {
         return member;
     }
 
+    public List<Member> findAll() {
+        return entityManager.createQuery(
+                "SELECT m FROM Member m", Member.class)
+                .getResultList();
+    }
+
+    public Optional<Member> findBy(Long id) {
+        Member member = entityManager.find(Member.class, id);
+        return Optional.ofNullable(member);
+    }
+
     public Member findById(Long id) {
         return entityManager.find(Member.class, id);
+    }
+
+    public void delete(Member member) {
+        entityManager.remove(member);
+    }
+
+    public long count() {
+        return entityManager.createQuery(
+                "SELECT COUNT(m) FROM Member m", Long.class)
+                .getSingleResult();
     }
 }

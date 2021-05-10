@@ -34,4 +34,8 @@ public class Member {
         this.team = team;
         team.allowMember(this);
     }
+
+    public void updateName(String username) {
+        this.username = username;
+    }
 }
