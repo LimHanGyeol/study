@@ -131,4 +131,20 @@ class MemberRepositoryTest {
         // then
         assertThat(memberDto).hasSize(1);
     }
+
+    @Test
+    void findByNames() {
+        // given
+        Member member1 = new Member("tommy", 27);
+        memberRepository.save(member1);
+
+        Member member2 = new Member("hangyeol", 27);
+        memberRepository.save(member2);
+
+        // when
+        List<Member> result = memberRepository.findByNames(List.of("tommy", "hangyeol"));
+
+        // then
+        assertThat(result).hasSize(2);
+    }
 }
