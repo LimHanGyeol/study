@@ -17,7 +17,7 @@ class MemberJpaRepositoryTest {
     @Test // Rollback(false)로 데이터 쿼리가 나가는지 확인할 수 있다.
     void testMember() {
         // given
-        Member member = new Member("tommy");
+        Member member = new Member("tommy", 27);
 
         // when
         Member savedMember = memberJpaRepository.save(member);
