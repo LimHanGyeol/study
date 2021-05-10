@@ -15,6 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class MemberRepositoryTest {
 
+    private static final Member MEMBER_HANGYEOL = new Member("hangyeol", 27);
+    private static final Member MEMBER_TOMMY = new Member("tommy", 10);
+    
     @Autowired
     private MemberRepository memberRepository;
 
@@ -23,34 +26,27 @@ class MemberRepositoryTest {
 
     @Test
     void testMember() {
-        // given
-        Member member = new Member("hangyeol", 27);
-
         // when
-        Member savedMember = memberRepository.save(member);
+        Member savedMember = memberRepository.save(MEMBER_HANGYEOL);
 
         // then
         Member findMember = memberRepository.findById(savedMember.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(findMember.getId()).isEqualTo(member.getId());
-        assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
-        assertThat(findMember).isEqualTo(member);
+        assertThat(findMember.getUsername()).isEqualTo(MEMBER_HANGYEOL.getUsername());
     }
 
     @Test
     @DisplayName("Member, Team Domain 통합 테스트")
     void basicCRUD() {
-        Member member1 = new Member("member1", 27);
-        Member member2 = new Member("member2", 28);
-        memberRepository.save(member1);
-        memberRepository.save(member2);
+        memberRepository.save(MEMBER_HANGYEOL);
+        memberRepository.save(MEMBER_TOMMY);
 
         // 단건 조회
-        Member findMember1 = memberRepository.findById(member1.getId()).orElseThrow();
-        Member findMember2 = memberRepository.findById(member2.getId()).orElseThrow();
-        assertThat(findMember1).isEqualTo(member1);
-        assertThat(findMember2).isEqualTo(member2);
+        Member findMember1 = memberRepository.findById(MEMBER_HANGYEOL.getId()).orElseThrow();
+        Member findMember2 = memberRepository.findById(MEMBER_TOMMY.getId()).orElseThrow();
+        assertThat(findMember1).isEqualTo(MEMBER_HANGYEOL);
+        assertThat(findMember2).isEqualTo(MEMBER_TOMMY);
 
         // 리스트 조회
         List<Member> members = memberRepository.findAll();
@@ -61,8 +57,8 @@ class MemberRepositoryTest {
         assertThat(count).isEqualTo(2);
 
         // 삭제
-        memberRepository.delete(member1);
-        memberRepository.delete(member2);
+        memberRepository.delete(MEMBER_HANGYEOL);
+        memberRepository.delete(MEMBER_TOMMY);
 
         // 개수 검증
         long deletedCount = memberRepository.count();
@@ -72,28 +68,25 @@ class MemberRepositoryTest {
     @Test
     void findByUsernameAndAgeGreaterThen() {
         // given
-        Member member1 = new Member("tommy", 10);
-        Member member2 = new Member("tommy", 20);
-        memberRepository.save(member1);
-        memberRepository.save(member2);
+        memberRepository.save(MEMBER_HANGYEOL);
+        memberRepository.save(MEMBER_TOMMY);
 
         // when
-        List<Member> findMembers = memberRepository.findByUsernameAndAgeGreaterThan("tommy", 15);
+        List<Member> findMembers = memberRepository.findByUsernameAndAgeGreaterThan("hangyeol", 15);
 
         // then
         assertThat(findMembers).hasSize(1);
-        assertThat(findMembers.get(0).getUsername()).isEqualTo("tommy");
-        assertThat(findMembers.get(0).getAge()).isEqualTo(20);
+        assertThat(findMembers.get(0).getUsername()).isEqualTo("hangyeol");
+        assertThat(findMembers.get(0).getAge()).isEqualTo(27);
     }
 
     @Test
     void findMember() {
         // given
-        Member member = new Member("tommy", 27);
-        Member savedMember = memberRepository.save(member);
+        Member savedMember = memberRepository.save(MEMBER_HANGYEOL);
 
         // when
-        List<Member> findMembers = memberRepository.findMember("tommy", 27);
+        List<Member> findMembers = memberRepository.findMember("hangyeol", 27);
 
         // then
         assertThat(findMembers.get(0)).isEqualTo(savedMember);
@@ -102,17 +95,14 @@ class MemberRepositoryTest {
     @Test
     void findUsernames() {
         // given
-        Member member1 = new Member("tommy", 27);
-        memberRepository.save(member1);
-
-        Member member2 = new Member("hangyeol", 27);
-        memberRepository.save(member2);
+        memberRepository.save(MEMBER_HANGYEOL);
+        memberRepository.save(MEMBER_TOMMY);
 
         // when
         List<String> usernames = memberRepository.findUsernames();
 
         // then
-        assertThat(usernames).containsExactly("tommy", "hangyeol");
+        assertThat(usernames).containsExactly("hangyeol", "tommy");
     }
 
     @Test
@@ -121,9 +111,8 @@ class MemberRepositoryTest {
         Team teamBlue = new Team("teamBlue");
         teamRepository.save(teamBlue);
 
-        Member member = new Member("tommy", 27);
-        member.participateTeam(teamBlue);
-        memberRepository.save(member);
+        MEMBER_HANGYEOL.participateTeam(teamBlue);
+        memberRepository.save(MEMBER_HANGYEOL);
 
         // when
         List<MemberDto> memberDto = memberRepository.findMemberDto();
@@ -135,14 +124,12 @@ class MemberRepositoryTest {
     @Test
     void findByNames() {
         // given
-        Member member1 = new Member("tommy", 27);
-        memberRepository.save(member1);
+        memberRepository.save(MEMBER_HANGYEOL);
 
-        Member member2 = new Member("hangyeol", 27);
-        memberRepository.save(member2);
+        memberRepository.save(MEMBER_TOMMY);
 
         // when
-        List<Member> result = memberRepository.findByNames(List.of("tommy", "hangyeol"));
+        List<Member> result = memberRepository.findByNames(List.of("hangyeol", "tommy"));
 
         // then
         assertThat(result).hasSize(2);
