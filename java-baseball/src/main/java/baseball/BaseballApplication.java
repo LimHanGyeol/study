@@ -15,7 +15,7 @@ public class BaseballApplication {
 
     public static void main(String[] args) {
         Referee referee = new Referee();
-        String result = referee.compare(List.of(1, 2, 3), List.of(1, 2, 3));
+        String result = referee.compare(List.of(7, 8, 9), List.of(1, 2, 3));
         System.out.println(result);
     }
 }

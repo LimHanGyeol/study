@@ -20,6 +20,11 @@ public class Referee {
             }
         }
         int ball = correctCount - strike;
+
+        if (strike == 0) {
+            return "아웃";
+        }
+
         return strike + " 스트라이크" + ball + " 볼";
     }
 }
