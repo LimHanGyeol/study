@@ -16,6 +16,14 @@ public class VendingMachine {
         this.changes += money;
     }
 
+    public void withdraw(int money) {
+        int change = this.changes - money;
+        if (change < 0) {
+            throw new IllegalStateException();
+        }
+        this.changes -= money;
+    }
+
     public int getChanges() {
         return changes;
     }
