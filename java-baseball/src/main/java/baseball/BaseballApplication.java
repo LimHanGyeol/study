@@ -1,5 +1,9 @@
 package baseball;
 
+import baseball.domain.NumberGenerator;
+
+import java.util.List;
+
 /**
  * 객체 지향 프로그래밍
  * 1. 기능을 가지고 있는 클래스를 인스턴스화(=객체)한다.
@@ -10,6 +14,8 @@ public class BaseballApplication {
 
 
     public static void main(String[] args) {
-
+        NumberGenerator numberGenerator = new NumberGenerator();
+        List<Integer> randomNumbers = numberGenerator.createRandomNumbers();
+        System.out.println("randomNumbers = " + randomNumbers);
     }
 }
