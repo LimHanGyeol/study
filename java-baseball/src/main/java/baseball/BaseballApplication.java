@@ -20,7 +20,10 @@ public class BaseballApplication {
 //        System.out.println("randomNumbers = " + randomNumbers);
 
         Judgement judgement = new Judgement();
-        int count = judgement.correctCount(List.of(1, 2, 3), List.of(1, 2, 3));
-        System.out.println(count);
+//        int count = judgement.correctCount(List.of(1, 2, 3), List.of(1, 2, 3));
+//        System.out.println(count);
+
+        boolean result = judgement.hasPlace(List.of(7, 8, 9), 1, 7);
+        System.out.println("result = " + result);
     }
 }
