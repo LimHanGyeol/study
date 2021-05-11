@@ -1,5 +1,6 @@
 package baseball;
 
+import baseball.domain.Judgement;
 import baseball.domain.NumberGenerator;
 
 import java.util.List;
@@ -14,8 +15,12 @@ public class BaseballApplication {
 
 
     public static void main(String[] args) {
-        NumberGenerator numberGenerator = new NumberGenerator();
-        List<Integer> randomNumbers = numberGenerator.createRandomNumbers();
-        System.out.println("randomNumbers = " + randomNumbers);
+//        NumberGenerator numberGenerator = new NumberGenerator();
+//        List<Integer> randomNumbers = numberGenerator.createRandomNumbers();
+//        System.out.println("randomNumbers = " + randomNumbers);
+
+        Judgement judgement = new Judgement();
+        int count = judgement.correctCount(List.of(1, 2, 3), List.of(1, 2, 3));
+        System.out.println(count);
     }
 }
