@@ -44,7 +44,7 @@ public class MemberApiController {
     }
 
 
-    @PostConstruct
+    // @PostConstruct
     public void init() {
         for (int i = 0; i < 100; i++) {
             memberRepository.save(new Member("tommy" + i, i));
