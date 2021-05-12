@@ -4,12 +4,11 @@ import com.tommy.datajpa.member.dto.MemberDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -49,13 +48,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findMemberFetchJoin();
 
     @Override
-    @EntityGraph(attributePaths = {"team"}) // 내부적으로 패치 조인이 된다. JPQL 을 사용하지 않고도 사용할 수 있다.
+    @EntityGraph(attributePaths = {"team"})
+        // 내부적으로 패치 조인이 된다. JPQL 을 사용하지 않고도 사용할 수 있다.
     List<Member> findAll();
 
     @EntityGraph(attributePaths = {"team"})
-    @Query("SELECT m FROM Member m") // 이런식으로 JPQL 을 사용해도 fetch join을 할 수 있다.
-    List<Member> findMemberEntityGraph();
+    @Query("SELECT m FROM Member m")
+    List<Member> findMemberEntityGraph(); // 이런식으로 JPQL 을 사용해도 fetch join을 할 수 있다.
 
     @EntityGraph(attributePaths = "team")
     List<Member> findByUsername(@Param("username") String username);
+
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
+    Member findReadOnlyByUsername(String username);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String username);
 }

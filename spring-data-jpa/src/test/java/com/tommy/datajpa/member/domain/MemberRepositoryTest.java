@@ -228,4 +228,37 @@ class MemberRepositoryTest {
             System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
         }
     }
+
+    /**
+     * 쿼리를 읽기전용으로 가져오고 싶을 경우 QueryHints를 사용하면 더티체킹의 객체 스냅샷을 체크하지 않는다.
+     * 하지만 성능저하의 원인은 읽기전용 보다는 잘못된 쿼리가 나가는 경우가 크므로
+     * 성능 최적화를 하기 위해 적용하기에는 큰 효율성은 없다.
+     * 감으로 사용하지 말고 성능 테스트를 해본 후 고려하자.
+     * 그리고 성능이 좋지 않다고 판단될 경우에는 이미 캐시를 이용한 레디스 적용을 고려하고 있을 것이다.
+     * 그래서 쿼리힌트로 얻을 수 있는 이점은 크지 않다.
+     * 처음부터 튜닝을 하는 접근 방법이 좋다고 생각 들진 않는다.
+     */
+    @Test
+    void queryHint() {
+        // given
+        Member savedMember = memberRepository.save(MEMBER_TOMMY);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Member findMember = memberRepository.findReadOnlyByUsername("tommy");
+        findMember.updateName("kkkk");
+        entityManager.flush();
+    }
+
+    @Test
+    void lock() {
+        // given
+        Member savedMember = memberRepository.save(MEMBER_TOMMY);
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<Member> findMember = memberRepository.findLockByUsername("tommy");
+    }
 }
