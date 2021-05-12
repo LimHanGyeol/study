@@ -178,4 +178,20 @@ class MemberRepositoryTest {
         assertThat(pageSlice.isFirst()).isTrue(); // 첫 번째 페이지인지
         assertThat(pageSlice.hasNext()).isTrue(); // 다음 페이지가 존재 하는지
     }
+
+    @Test
+    void bulkUpdate() {
+        // given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        // when
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
+    }
 }

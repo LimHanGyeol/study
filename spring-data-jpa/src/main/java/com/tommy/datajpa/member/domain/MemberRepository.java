@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,4 +39,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(value = "SELECT m FROM Member m LEFT JOIN m.team t",
             countQuery = "SELECT COUNT(m.username) FROM Member m")
     Slice<Member> findByAge(int age, Pageable pageable);
+
+    @Modifying // 벌크 업데이트시 해당 어노테이션이 필수이다. JPA에서 executeUpdate의 역할을 한다.
+    @Query("UPDATE Member m SET m.age = m.age + 1 WHERE m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
 }
