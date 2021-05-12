@@ -1,6 +1,8 @@
 package com.tommy.datajpa.member.domain;
 
 import com.tommy.datajpa.member.dto.MemberDto;
+import com.tommy.datajpa.member.dto.UsernameOnly;
+import com.tommy.datajpa.member.dto.UsernameOnlyDto;
 import com.tommy.datajpa.team.domain.Team;
 import com.tommy.datajpa.team.domain.TeamRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -260,5 +262,26 @@ class MemberRepositoryTest {
 
         // when
         List<Member> findMember = memberRepository.findLockByUsername("tommy");
+    }
+
+    @Test
+    void projections() {
+        // given
+        Team teamA = new Team("teamA");
+        entityManager.persist(teamA);
+
+        Member member1 = new Member("member1", 0);
+        member1.participateTeam(teamA);
+        Member member2 = new Member("member2", 0);
+        member2.participateTeam(teamA);
+        entityManager.persist(member1);
+        entityManager.persist(member2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<UsernameOnlyDto> members = memberRepository.findProjectionsByUsername("member1");
+
     }
 }

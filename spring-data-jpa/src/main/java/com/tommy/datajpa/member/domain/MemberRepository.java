@@ -1,7 +1,8 @@
 package com.tommy.datajpa.member.domain;
 
 import com.tommy.datajpa.member.dto.MemberDto;
-import org.springframework.data.domain.Page;
+import com.tommy.datajpa.member.dto.UsernameOnly;
+import com.tommy.datajpa.member.dto.UsernameOnlyDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.*;
@@ -64,4 +65,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(String username);
+
+    List<UsernameOnlyDto> findProjectionsByUsername(@Param("username") String username);
 }
