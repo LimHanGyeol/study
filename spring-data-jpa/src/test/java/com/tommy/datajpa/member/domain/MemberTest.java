@@ -2,12 +2,12 @@ package com.tommy.datajpa.member.domain;
 
 import com.tommy.datajpa.team.domain.Team;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.List;
 
 @SpringBootTest
@@ -16,6 +16,9 @@ class MemberTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     void testEntity() {
@@ -49,10 +52,32 @@ class MemberTest {
         List<Member> members = entityManager.createQuery(
                 "SELECT m FROM Member m", Member.class
         ).getResultList();
-        
+
         for (Member member : members) {
             System.out.println("member = " + member);
             System.out.println("member.getTeam() = " + member.getTeam());
         }
+    }
+
+    @Test
+    void jpaEventBaseEntity() throws InterruptedException {
+        // given
+        Member member = new Member("member1", 10);
+        memberRepository.save(member); // @PrePersist
+
+        Thread.sleep(100);
+        member.updateName("update");
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow();
+
+        // then
+        System.out.println("findMember.getCreatedDate() = " + findMember.getCreatedDate());
+        System.out.println("findMember.getCreatedBy() = " + findMember.getCreatedBy());
+        System.out.println("findMember.getUpdatedDate() = " + findMember.getLastModifiedDate());
+        System.out.println("findMember.getLastModifiedBy() = " + findMember.getLastModifiedBy());
     }
 }

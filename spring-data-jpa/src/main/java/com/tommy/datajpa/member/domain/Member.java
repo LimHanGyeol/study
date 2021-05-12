@@ -1,5 +1,7 @@
 package com.tommy.datajpa.member.domain;
 
+import com.tommy.datajpa.BaseEntity;
+import com.tommy.datajpa.BaseJpaEntity;
 import com.tommy.datajpa.team.domain.Team;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Member {
+public class Member extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
