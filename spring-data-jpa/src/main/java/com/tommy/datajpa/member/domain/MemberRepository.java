@@ -1,6 +1,9 @@
 package com.tommy.datajpa.member.domain;
 
 import com.tommy.datajpa.member.dto.MemberDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,6 +29,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByNames(@Param("names") Collection<String> names);
 
     List<Member> findListByUsername(String username);
+
     Member findMemberByUsername(String username);
+
     Optional<Member> findOptionalByUsername(String username);
+
+    // 페이징된 데이터만 가져오고 싶을 경우 page 타입을 List로 가져올 수 있다.
+    @Query(value = "SELECT m FROM Member m LEFT JOIN m.team t",
+            countQuery = "SELECT COUNT(m.username) FROM Member m")
+    Slice<Member> findByAge(int age, Pageable pageable);
 }

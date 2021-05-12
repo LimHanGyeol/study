@@ -7,9 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -150,5 +152,30 @@ class MemberRepositoryTest {
         // JPA의 Exception을 Spring이 감싸 IncorrectResultSizeDataAccessException 등.. 추상화된 예외가 발생한다.
         Member findMember = memberRepository.findMemberByUsername("hangyeol");
         Member optionalMember = memberRepository.findOptionalByUsername("tommy").orElseThrow();
+    }
+
+    @Test
+    void paging() {
+        // given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 10));
+        memberRepository.save(new Member("member3", 10));
+        memberRepository.save(new Member("member4", 10));
+        memberRepository.save(new Member("member5", 10));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        //Page<Member> page = memberRepository.findByAge(age, pageRequest);
+        Slice<Member> pageSlice = memberRepository.findByAge(age, pageRequest);
+
+        // then
+        assertThat(pageSlice.getContent()).hasSize(3); // 페이징 된 데이터
+//        assertThat(pageSlice.getTotalElements()).isEqualTo(5); // totalCount (5) Slice는 전체 Count를 가져오지 않음.
+        assertThat(pageSlice.getNumber()).isEqualTo(0); // 페이지 번호
+//        assertThat(pageSlice.getTotalPages()).isEqualTo(2); // 전체 페이지 개수 Slice는 전체 페이지 개수를 가져오지 않는다.
+        assertThat(pageSlice.isFirst()).isTrue(); // 첫 번째 페이지인지
+        assertThat(pageSlice.hasNext()).isTrue(); // 다음 페이지가 존재 하는지
     }
 }
