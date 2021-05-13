@@ -1,8 +1,8 @@
 package com.tommy.querydsl;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
-import com.tommy.querydsl.member.QMember;
 import com.tommy.querydsl.team.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static com.tommy.querydsl.member.QMember.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,5 +125,40 @@ public class QueryDslBasicTest {
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    /**
+     * fetch() : 리스트 조회, 없으면 EmptyList 리턴
+     * fetchOne() : 단건 조회.
+     * 결과가 없으면 null, 결과가 둘 이상이면 com.querydsl.core.NonUniqueResultException 발생
+     * fetchFirst() : limit(1).fetchOne()
+     * fetchResults() : 페이징 정보 포함, total count 쿼리 추가 실행
+     * fetchCount() : count 쿼리로 변경해서 count 수 조회
+     *
+     * fetchResults의 경우 페이징 쿼리가 복잡해지면 Contents를 가져오는 쿼리와
+     * 실제 totalCount를 가져오는 쿼리가 성능때문에 다를 경우가 있다.
+     * 복잡하고 성능이 중요한 페이징 쿼리에서는 fetchResults를 쓰지말고 쿼리를 두번 날리는게 낫다.
+     */
+    @Test
+    void resultFetch() {
+        List<Member> fetch = queryFactory // 리스트 조회
+                .selectFrom(member)
+                .fetch();
+
+        Member fetchOne = queryFactory // 단건 조회
+                .selectFrom(member)
+                .fetchOne();
+
+        Member fetchFirst = queryFactory // limit 1 + 단건 조회. limit(1).fetchOne() 과 같다.
+                .selectFrom(member)
+                .fetchFirst();
+
+        QueryResults<Member> fetchResults = queryFactory // 페이징
+                .selectFrom(member)
+                .fetchResults();
+
+        long count = queryFactory
+                .selectFrom(member)
+                .fetchCount();
     }
 }
