@@ -4,6 +4,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
+import com.tommy.querydsl.member.QMember;
 import com.tommy.querydsl.team.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import java.util.List;
 
@@ -346,5 +349,40 @@ public class QueryDslBasicTest {
         for (Tuple tuple : result) {
             System.out.println("tuple = " + tuple);
         }
+    }
+
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
+
+    @Test
+    void non_fetch_join() {
+        entityManager.flush();
+        entityManager.clear();
+
+        Member findMember = queryFactory
+                .selectFrom(QMember.member)
+                .where(QMember.member.username.eq("member1"))
+                .fetchOne();
+
+        boolean isLoaded = entityManagerFactory.getPersistenceUnitUtil()
+                .isLoaded(findMember.getTeam());
+        assertThat(isLoaded).as("fetch join 미적용").isFalse();
+    }
+
+    @Test
+    void fetch_join() {
+        entityManager.flush();
+        entityManager.clear();
+
+        Member findMember = queryFactory
+                .selectFrom(QMember.member)
+                .join(member.team, team)
+                .fetchJoin()
+                .where(QMember.member.username.eq("member1"))
+                .fetchOne();
+
+        boolean isLoaded = entityManagerFactory.getPersistenceUnitUtil()
+                .isLoaded(findMember.getTeam());
+        assertThat(isLoaded).as("fetch join 미적용").isTrue();
     }
 }
