@@ -303,4 +303,48 @@ public class QueryDslBasicTest {
                 .extracting("username")
                 .containsExactly("teamA", "teamB");
     }
+
+    /**
+     * 회원과 팀을 조인하면서, 팀 이름이 teamA인 팀만 조인, 회원은 모두 조회
+     * JPQL : SELECT m, t FROM Member m LEFT JOIN m.team t ON t.name = 'teamA'
+     * 결과를 출력할 때 JPQL에서 with 문법을 사용한다.
+     */
+    @Test
+    void join_on_filtering() {
+        List<Tuple> result = queryFactory
+                .select(member, team)
+                .from(member)
+                .leftJoin(member.team, team)
+                .on(team.name.eq("teamA"))
+                .fetch();
+
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
+
+    /**
+     * 회원의 이름이 팀 이름과 같은 대상 외부 조인
+     * 크로스 조인을 할 경우
+     * leftJoin() 파라미터에 일반 조인과 다르게 엔티티 하나만 들어간다.
+     * Ex) from(member).leftJoin(team).on(xxx)
+     */
+    @Test
+    @DisplayName("연관관계가 없는 엔티티를 외부조인 할 때 on절 사용")
+    void join_on_no_relation() {
+        entityManager.persist(new Member("teamA", 10));
+        entityManager.persist(new Member("teamB", 10));
+        entityManager.persist(new Member("teamC", 10));
+
+        List<Tuple> result = queryFactory
+                .select(member, team)
+                .from(member)
+                .leftJoin(team)
+                .on(member.username.eq(team.name))
+                .fetch();
+
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
 }
