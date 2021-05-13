@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import static com.tommy.querydsl.member.QMember.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -65,11 +66,14 @@ public class QueryDslBasicTest {
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
 
+    /**
+     * QModel m1 = new QModel("m1"); 이런식으로 사용하면 JPQL에 할당되는 alias를 변경할 수 있다.
+     * 같은 테이블을 조인하는 등의 사용을 할 수 있다.
+     * 그 외에는 정적 팩토리 메서드와 static import 를 조합하여 사용하는 것을 권장한다.
+     */
     @Test
     @DisplayName("QueryDSL을 이용하여 Member1 탐색")
     void startQueryDSL() {
-        QMember member = new QMember("m"); // 어떤 QMember 인지 구분할 수 있게 해주는 이름
-
         Member findMember = queryFactory
                 .select(member)
                 .from(member)
