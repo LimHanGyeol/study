@@ -16,6 +16,27 @@ import javax.persistence.EntityManager;
 import static com.tommy.querydsl.member.QMember.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * WHERE 조건
+ * member.username.eq("member1") -> =
+ * member.username.nq("member1") -> !=
+ * member.username.eq("member1").not() -> !=
+ * <p>
+ * member.username.isNotNull()
+ * <p>
+ * member.age.in() -> in(n, n)
+ * member.age.notIn() -> not in(n, n)
+ * member.age.between() -> between n, n
+ * <p>
+ * member.age.goe(30) -> age >= 30
+ * member.age.gt(30) -> age > 30
+ * member.age.loe(30) -> age <= 30
+ * member.age.lt(30) -> age < 30
+ * <p>
+ * member.username.like("member%") -> like 검색
+ * member.username.contains("member") -> like "%member%" 검색
+ * member.username.startsWith("member") -> like "member%" 검색
+ */
 @SpringBootTest
 @Transactional
 public class QueryDslBasicTest {
@@ -79,6 +100,27 @@ public class QueryDslBasicTest {
                 .from(member)
                 .where(member.username.eq("member1"))
                 .fetchOne();// 하나를 가져온다.
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    @DisplayName("다양한 검색조건(WHERE)을 사용할 수 있다.")
+    void search() {
+        Member findMember = queryFactory.selectFrom(member)
+                .where(member.username.eq("member1")
+                        .and(member.age.eq(10)))
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+    }
+
+    @Test
+    @DisplayName("And 조건을 사용할 경우 ',' 로 대신할 수 있다..")
+    void searchAnd() {
+        Member findMember = queryFactory.selectFrom(member)
+                .where(member.username.eq("member1"), (member.age.eq(10)))
+                .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
