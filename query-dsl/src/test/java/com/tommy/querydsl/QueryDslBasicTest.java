@@ -188,4 +188,36 @@ public class QueryDslBasicTest {
         assertThat(member6.getUsername()).isEqualTo("member6");
         assertThat(memberNull.getUsername()).isNull();
     }
+
+    @Test
+    void paging1() {
+        List<Member> results = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(0)
+                .limit(2)
+                .fetch();
+
+        assertThat(results).hasSize(2);
+    }
+
+    /**
+     * 실무에서는 fetchResults를 쓰지 못할 경우가 있다.
+     * Contents와 Count 쿼리를 따로 작성해야 하는 경우가 있다.
+     */
+    @Test
+    @DisplayName("전체 조회수가 필요한 경우")
+    void paging2() {
+        QueryResults<Member> queryResults = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)
+                .limit(2)
+                .fetchResults();
+
+        assertThat(queryResults.getTotal()).isEqualTo(4);
+        assertThat(queryResults.getLimit()).isEqualTo(2);
+        assertThat(queryResults.getOffset()).isEqualTo(1);
+        assertThat(queryResults.getResults()).hasSize(2);
+    }
 }
