@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
 import com.tommy.querydsl.member.MemberDto;
@@ -244,6 +245,47 @@ public class QueryDslMediumTest {
                 .selectFrom(member)
                 .where(builder) // builder 도 and, or로 조립할 수 있다.
                 .fetch();
+    }
 
+    /**
+     * WHERE 다중 파라미터 사용
+     * 김영한님이 실무에서 즐겨 사용하는 방식이다.
+     */
+    @Test
+    void dynamicQuery_whereParam() {
+        String usernameParam = "member1";
+        Integer ageParam = 10;
+
+        List<Member> result = searchMember2(usernameParam, ageParam);
+        assertThat(result).hasSize(1);
+    }
+
+    private List<Member> searchMember2(String usernameCondition, Integer ageCondition) {
+
+        return queryFactory
+                .selectFrom(member)
+                .where(allEq(usernameCondition, ageCondition))
+                .fetch();
+                // .where(usernameEq(usernameCondition), ageEq(ageCondition)) // WHERE 조건에 NULL이 들어오면 조건이 무시 된다.
+    }
+
+    // 조립할 경우 BooleanExpression으로 사용할 수 있다.
+    // BooleanExpression에서 Predicate를 구현하고 있다.
+    private BooleanExpression usernameEq(String usernameCondition) {
+        if (usernameCondition == null) {
+            return null;
+        }
+        return member.username.eq(usernameCondition);
+    }
+
+    private BooleanExpression ageEq(Integer ageCondition) {
+        if (ageCondition == null) {
+            return null;
+        }
+        return member.age.eq(ageCondition);
+    }
+
+    private BooleanExpression allEq(String usernameCondition, Integer ageCondition) {
+        return usernameEq(usernameCondition).and(ageEq(ageCondition));
     }
 }
