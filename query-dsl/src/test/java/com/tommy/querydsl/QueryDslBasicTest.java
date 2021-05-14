@@ -3,6 +3,7 @@ package com.tommy.querydsl;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
@@ -487,6 +488,34 @@ public class QueryDslBasicTest {
                         .when(member.age.between(21, 30)).then("21~30살")
                         .otherwise("기타"))
                 .from(member)
+                .fetch();
+
+        for (String print : result) {
+            System.out.println("print = " + print);
+        }
+    }
+
+    @Test
+    void constant() {
+        List<Tuple> result = queryFactory
+                .select(member.username, Expressions.constant("A"))
+                .from(member)
+                .fetch();
+
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
+
+    /**
+     * stringValue를 이용하여 형변환 할 수 있다.
+     */
+    @Test
+    void concat() {
+        List<String> result = queryFactory
+                .select(member.username.concat("_").concat(member.age.stringValue()))
+                .from(member)
+                .where(member.username.eq("member1"))
                 .fetch();
 
         for (String print : result) {
