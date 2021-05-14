@@ -2,6 +2,7 @@ package com.tommy.querydsl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
 import com.tommy.querydsl.member.QMember;
@@ -139,7 +140,7 @@ public class QueryDslBasicTest {
      * fetchFirst() : limit(1).fetchOne()
      * fetchResults() : 페이징 정보 포함, total count 쿼리 추가 실행
      * fetchCount() : count 쿼리로 변경해서 count 수 조회
-     *
+     * <p>
      * fetchResults의 경우 페이징 쿼리가 복잡해지면 Contents를 가져오는 쿼리와
      * 실제 totalCount를 가져오는 쿼리가 성능때문에 다를 경우가 있다.
      * 복잡하고 성능이 중요한 페이징 쿼리에서는 fetchResults를 쓰지말고 쿼리를 두번 날리는게 낫다.
@@ -384,5 +385,81 @@ public class QueryDslBasicTest {
         boolean isLoaded = entityManagerFactory.getPersistenceUnitUtil()
                 .isLoaded(findMember.getTeam());
         assertThat(isLoaded).as("fetch join 미적용").isTrue();
+    }
+
+    /**
+     * 나이가 가장 많은 회원 조회
+     */
+    @Test
+    void subQuery() {
+        QMember subMember = new QMember("subMember");
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.eq(
+                        JPAExpressions
+                                .select(subMember.age.max())
+                                .from(subMember)
+                )).fetch();
+
+        assertThat(result).extracting("age")
+                .containsExactly(40);
+    }
+
+    /**
+     * 나이가 평균 이상인 회원 조회
+     */
+    @Test
+    void subQueryGoe() {
+        QMember subMember = new QMember("subMember");
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.goe(
+                        JPAExpressions
+                                .select(subMember.age.avg())
+                                .from(subMember)
+                )).fetch();
+
+        assertThat(result).extracting("age")
+                .containsExactly(30, 40);
+    }
+
+    /**
+     * 나이가 평균 이상인 회원 조회
+     * 효율적인 쿼리는 아니다.
+     */
+    @Test
+    void subQueryGoeIn() {
+        QMember subMember = new QMember("subMember");
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(member.age.in(
+                        JPAExpressions
+                                .select(subMember.age)
+                                .from(subMember)
+                                .where(subMember.age.gt(10))
+                )).fetch();
+
+        assertThat(result).extracting("age")
+                .containsExactly(20, 30, 40);
+    }
+
+    @Test
+    void selectSubQuery() {
+        QMember subMember = new QMember("subMember");
+
+        List<Tuple> result = queryFactory
+                .select(member.username,
+                        JPAExpressions
+                                .select(subMember.age.avg())
+                                .from(subMember))
+                .from(member)
+                .fetch();
+
+        for (Tuple tuple :  result) {
+            System.out.println("tuple = " + tuple);
+        }
     }
 }
