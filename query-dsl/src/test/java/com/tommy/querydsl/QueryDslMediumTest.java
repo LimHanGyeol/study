@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -287,5 +288,49 @@ public class QueryDslMediumTest {
 
     private BooleanExpression allEq(String usernameCondition, Integer ageCondition) {
         return usernameEq(usernameCondition).and(ageEq(ageCondition));
+    }
+
+    /**
+     * 벌크 연산은 영속성 컨텍스트를 거치지 않고 바로 DB에 set 된다.
+     * 그래서 영속성 컨텍스트와 싱크가 맞지 않는 현상이 일어나고,
+     * Repeatable Read 상태로 조회가 된다.
+     * 벌크 연산을 하는 경우에는 entityManager를 flush, clear하고 다시 조회하여
+     * 영속성 컨텍스트와 DB와의 싱크를 맞추도록 하자.
+     */
+    @Test
+    @Rollback(value = false)
+    void bulkUpdate() {
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member : result) {
+            System.out.println("member = " + member);
+        }
+    }
+
+    @Test
+    void bulkAdd() {
+        long execute = queryFactory
+                .update(member)
+                .set(member.age, member.age.add(1))
+                .execute();
+    }
+
+    @Test
+    void bulkDelete() {
+        long execute = queryFactory
+                .delete(member)
+                .where(member.age.gt(18))
+                .execute();
     }
 }
