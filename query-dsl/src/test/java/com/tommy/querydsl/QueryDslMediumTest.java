@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.Member;
 import com.tommy.querydsl.member.MemberDto;
 import com.tommy.querydsl.member.QMember;
+import com.tommy.querydsl.member.QMemberDto;
 import com.tommy.querydsl.team.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -188,6 +189,30 @@ public class QueryDslMediumTest {
 
         for (UserDto dto : result) {
             System.out.println("dto = " + dto);
+        }
+    }
+
+    /**
+     * @QueryProjection을 사용하면 Q파일로 만들어주어 바로 접근할 수 있다.
+     * 생성자 방식으로 주입하게 되면 컴파일 단계에서 오류를 잡을 수 없다. 런타임에서 에러가 된다.
+     * QueryProjection은 생성자에서 잘못된 값을 주입하면 컴파일 에러가 난다.
+     *
+     * 하지만 Q 파일을 생성해야 한다는 점과 DTO가 QueryDSL에 대해 의존하게 된다는 단점이 있다.
+     * DTO같은 경우에는 domain layer에서 사용 자유롭다.
+     * 흘러가는 DTO 안에 QueryDSL이 들어 있어 좋지 않다.
+     *
+     * DTO를 깔끔하게 가져가고 싶으면 QueryProjection을 지양하고,
+     * 생성자, 필드 방식을 주로 사용한다.
+     */
+    @Test
+    void findDtoByQueryProjection() {
+        List<MemberDto> result = queryFactory
+                .select(new QMemberDto(member.username, member.age))
+                .from(member)
+                .fetch();
+
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto = " + memberDto);
         }
     }
 }
