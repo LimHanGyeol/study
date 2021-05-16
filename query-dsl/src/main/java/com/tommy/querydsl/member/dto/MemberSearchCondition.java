@@ -17,4 +17,9 @@ public class MemberSearchCondition {
     private Integer ageGoe;
     private Integer ageLoe;
 
+    public MemberSearchCondition(String teamName, Integer ageGoe, Integer ageLoe) {
+        this.teamName = teamName;
+        this.ageGoe = ageGoe;
+        this.ageLoe = ageLoe;
+    }
 }
