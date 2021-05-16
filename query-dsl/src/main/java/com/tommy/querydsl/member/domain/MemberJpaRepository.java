@@ -1,6 +1,7 @@
 package com.tommy.querydsl.member.domain;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.QMemberTeamDto;
 import com.tommy.querydsl.member.dto.MemberSearchCondition;
@@ -85,5 +86,72 @@ public class MemberJpaRepository {
                 .leftJoin(member.team, team)
                 .where(builder)
                 .fetch();
+    }
+
+    public List<MemberTeamDto> search(MemberSearchCondition condition) {
+        return queryFactory
+                .select(new QMemberTeamDto(
+                        member.id.as("memberId"),
+                        member.username,
+                        member.age,
+                        team.id.as("teamId"),
+                        team.name.as("teamName")
+                ))
+                .from(member)
+                .leftJoin(member.team, team)
+                .where(
+                        usernameEq(condition.getUsername()),
+                        teamNameEq(condition.getTeamName()),
+                        ageGoe(condition.getAgeGoe()),
+                        ageLoe(condition.getAgeLoe())
+                )
+                .fetch();
+    }
+
+    public List<Member> searchMember(MemberSearchCondition condition) {
+        return queryFactory
+                .selectFrom(member)
+                .from(member)
+                .leftJoin(member.team, team)
+                .where( // 다중 Where 파라미터는 메서드 분리로 재사용할 수 있다.
+                        usernameEq(condition.getUsername()),
+                        teamNameEq(condition.getTeamName()),
+                        ageGoe(condition.getAgeGoe()),
+                        ageLoe(condition.getAgeLoe())
+                )
+                .fetch();
+    }
+
+    private BooleanExpression ageBetween(int ageLoe, int ageGoe) {
+        return ageLoe(ageLoe).and(ageGoe(ageGoe));
+    }
+
+
+    private BooleanExpression usernameEq(String username) {
+        if (!StringUtils.hasText(username)) {
+            return null;
+        }
+        return member.username.eq(username);
+    }
+
+    private BooleanExpression teamNameEq(String teamName) {
+        if (!StringUtils.hasText(teamName)) {
+            return null;
+        }
+        return team.name.eq(teamName);
+    }
+
+    private BooleanExpression ageGoe(Integer ageGoe) {
+        if (ageGoe == null) {
+            return null;
+        }
+        return member.age.goe(ageGoe);
+    }
+
+    private BooleanExpression ageLoe(Integer ageLoe) {
+        if (ageLoe == null) {
+            return null;
+        }
+        return member.age.loe(ageLoe);
     }
 }

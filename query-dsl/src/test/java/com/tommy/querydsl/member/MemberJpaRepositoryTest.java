@@ -71,11 +71,11 @@ class MemberJpaRepositoryTest {
         member4.participateTeam(teamB);
         entityManager.persist(member4);
 
-        // MemberSearchCondition condition = new MemberSearchCondition("teamB", 35, 40);
-        MemberSearchCondition condition = new MemberSearchCondition("teamB");
-        List<MemberTeamDto> result = memberJpaRepository.searchByBuilder(condition);
+         MemberSearchCondition condition = new MemberSearchCondition("teamB", 35, 40);
+//        MemberSearchCondition condition = new MemberSearchCondition("teamB");
+        List<MemberTeamDto> result = memberJpaRepository.search(condition);
 
-        // assertThat(result).extracting("username").containsExactly("member4");
-        assertThat(result).extracting("username").containsExactly("member3", "member4");
+         assertThat(result).extracting("username").containsExactly("member4");
+//        assertThat(result).extracting("username").containsExactly("member3", "member4");
     }
 }
