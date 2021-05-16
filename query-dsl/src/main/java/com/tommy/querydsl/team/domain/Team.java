@@ -1,6 +1,6 @@
-package com.tommy.querydsl.team;
+package com.tommy.querydsl.team.domain;
 
-import com.tommy.querydsl.member.Member;
+import com.tommy.querydsl.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

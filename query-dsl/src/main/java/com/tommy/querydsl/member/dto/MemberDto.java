@@ -1,4 +1,4 @@
-package com.tommy.querydsl.member;
+package com.tommy.querydsl.member.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;

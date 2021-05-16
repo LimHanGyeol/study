@@ -1,0 +1,27 @@
+package com.tommy.querydsl.member.dto;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * 회원명, 팀명, 나이(ageGeo, ageLoe)
+ */
+@Getter
+@NoArgsConstructor
+public class MemberSearchCondition {
+
+    private String username;
+    private String teamName;
+    private Integer ageGoe;
+    private Integer ageLoe;
+
+    public MemberSearchCondition(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public MemberSearchCondition(String teamName, Integer ageGoe, Integer ageLoe) {
+        this.teamName = teamName;
+        this.ageGoe = ageGoe;
+        this.ageLoe = ageLoe;
+    }
+}

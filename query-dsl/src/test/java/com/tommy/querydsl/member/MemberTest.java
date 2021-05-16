@@ -1,6 +1,7 @@
 package com.tommy.querydsl.member;
 
-import com.tommy.querydsl.team.Team;
+import com.tommy.querydsl.member.domain.Member;
+import com.tommy.querydsl.team.domain.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
