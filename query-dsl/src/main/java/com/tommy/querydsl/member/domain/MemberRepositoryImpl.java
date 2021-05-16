@@ -4,7 +4,7 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tommy.querydsl.member.QMemberTeamDto;
+import com.tommy.querydsl.member.dto.QMemberTeamDto;
 import com.tommy.querydsl.member.dto.MemberSearchCondition;
 import com.tommy.querydsl.member.dto.MemberTeamDto;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static com.tommy.querydsl.member.QMember.member;
-import static com.tommy.querydsl.team.QTeam.team;
+import static com.tommy.querydsl.member.domain.QMember.member;
+import static com.tommy.querydsl.team.domain.QTeam.team;
 
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberCustomRepository {

@@ -7,7 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.domain.Member;
-import com.tommy.querydsl.member.QMember;
+import com.tommy.querydsl.member.domain.QMember;
 import com.tommy.querydsl.team.domain.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,8 +22,8 @@ import javax.persistence.PersistenceUnit;
 
 import java.util.List;
 
-import static com.tommy.querydsl.member.QMember.*;
-import static com.tommy.querydsl.team.QTeam.*;
+import static com.tommy.querydsl.member.domain.QMember.*;
+import static com.tommy.querydsl.team.domain.QTeam.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

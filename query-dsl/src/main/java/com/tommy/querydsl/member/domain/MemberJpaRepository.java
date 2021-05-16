@@ -3,7 +3,7 @@ package com.tommy.querydsl.member.domain;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tommy.querydsl.member.QMemberTeamDto;
+import com.tommy.querydsl.member.dto.QMemberTeamDto;
 import com.tommy.querydsl.member.dto.MemberSearchCondition;
 import com.tommy.querydsl.member.dto.MemberTeamDto;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tommy.querydsl.member.QMember.member;
-import static com.tommy.querydsl.team.QTeam.team;
+import static com.tommy.querydsl.member.domain.QMember.member;
+import static com.tommy.querydsl.team.domain.QTeam.team;
 
 @RequiredArgsConstructor
 @Repository

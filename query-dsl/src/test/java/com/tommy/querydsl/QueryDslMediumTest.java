@@ -8,8 +8,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.domain.Member;
 import com.tommy.querydsl.member.dto.MemberDto;
-import com.tommy.querydsl.member.QMember;
-import com.tommy.querydsl.member.QMemberDto;
+import com.tommy.querydsl.member.domain.QMember;
+import com.tommy.querydsl.member.dto.QMemberDto;
 import com.tommy.querydsl.team.domain.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.querydsl.jpa.JPAExpressions.select;
-import static com.tommy.querydsl.member.QMember.member;
+import static com.tommy.querydsl.member.domain.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -94,7 +94,7 @@ public class QueryDslMediumTest {
     @Test
     void findDtoByJPQL() {
         List<MemberDto> result = entityManager.createQuery(
-                "SELECT NEW com.tommy.querydsl.member.MemberDto(m.username, m.age) FROM Member m", MemberDto.class
+                "SELECT NEW com.tommy.querydsl.member.dto.MemberDto(m.username, m.age) FROM Member m", MemberDto.class
         ).getResultList();
 
         for (MemberDto memberDto : result) {
