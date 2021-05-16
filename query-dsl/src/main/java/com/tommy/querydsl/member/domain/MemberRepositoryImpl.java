@@ -2,6 +2,7 @@ package com.tommy.querydsl.member.domain;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tommy.querydsl.member.QMemberTeamDto;
 import com.tommy.querydsl.member.dto.MemberSearchCondition;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -74,9 +76,9 @@ public class MemberRepositoryImpl implements MemberCustomRepository {
     @Override
     public Page<MemberTeamDto> searchPageComplex(MemberSearchCondition condition, Pageable pageable) {
         List<MemberTeamDto> content = getContent(condition, pageable); // content 만 가지고 옴
-        long total = getTotalCount(condition);
+        JPAQuery<Member> totalCountQuery = getTotalCount(condition);
 
-        return new PageImpl<>(content, pageable, total);
+        return PageableExecutionUtils.getPage(content, pageable, totalCountQuery::fetchCount);
     }
 
     private List<MemberTeamDto> getContent(MemberSearchCondition condition, Pageable pageable) {
@@ -101,7 +103,7 @@ public class MemberRepositoryImpl implements MemberCustomRepository {
                 .fetch();
     }
 
-    private long getTotalCount(MemberSearchCondition condition) {
+    private JPAQuery<Member> getTotalCount(MemberSearchCondition condition) {
         return queryFactory // count 를 따로 가져오는 쿼리
                 .select(member)
                 .from(member)
@@ -111,8 +113,7 @@ public class MemberRepositoryImpl implements MemberCustomRepository {
                         teamNameEq(condition.getTeamName()),
                         ageGoe(condition.getAgeGoe()),
                         ageLoe(condition.getAgeLoe())
-                )
-                .fetchCount();
+                );
     }
 
     private BooleanExpression usernameEq(String username) {
