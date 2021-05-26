@@ -23,7 +23,7 @@
     - Actor : 서로 다른 Needs, Expectation(기대치)을 가짐.  
     밑의 예시에서 Actor는 Policy, Architect, Operations로 나뉘어짐.
 
-![srp-uml.png](srp-uml.png)
+![srp-uml.png](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/image/srp-uml.png)
 
 ## It's About Roles
 
@@ -75,7 +75,7 @@
     - 하나의 클래스에 여러개의 책임이 부여될 경우
     Actor들의 Coupling(연결)을 유발한다.
 
-![fan-out.png](fan-out.png)
+![fan-out.png](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/image/fan-out.png)
 
 # SRP
 
