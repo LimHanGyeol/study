@@ -111,8 +111,8 @@
 
 ## Dependency Management
 의존성 관리에 대한 중요한 규칙 - SOLID 원칙
-* SRP : Single Responsibility Principle
-* OCP : Open Closed Principle
-* LSP : Liskov Substitution Principle
-* ISP : Interface Segregation Principle
-* DIP : Dependency Inversion Principle
+* [SRP : Single Responsibility Principle](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/srp.md)
+* [OCP : Open Closed Principle](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/ocp.md)
+* [LSP : Liskov Substitution Principle](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/lsp.md)
+* [ISP : Interface Segregation Principle](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/isp.md)
+* [DIP : Dependency Inversion Principle](https://github.com/LimHanGyeol/study/blob/%2312/solid-foundation/solid-foundation/dip.md)
