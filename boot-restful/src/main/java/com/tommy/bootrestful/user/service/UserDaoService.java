@@ -1,6 +1,7 @@
 package com.tommy.bootrestful.user.service;
 
 import com.tommy.bootrestful.user.domain.User;
+import com.tommy.bootrestful.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,6 @@ public class UserDaoService {
                 return user;
             }
         }
-        throw new IllegalArgumentException("사용자를 찾을 수 없습니다. 다시 확인해주세요.");
+        throw new UserNotFoundException(String.format("ID[%d] not found", id));
     }
 }
