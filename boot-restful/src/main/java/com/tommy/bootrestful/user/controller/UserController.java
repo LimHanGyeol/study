@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User findUserById(@PathVariable(name = "id") long userId) {
+    public User findUserById(@PathVariable(name = "id") int userId) {
         return userDaoService.findById(userId);
     }
 
@@ -35,5 +35,11 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable(name = "id") int userId) {
+        userDaoService.deleteById(userId);
+        return ResponseEntity.noContent().build();
     }
 }

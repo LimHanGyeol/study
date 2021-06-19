@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -35,10 +36,24 @@ public class UserDaoService {
         return user;
     }
 
-    public User findById(long id) {
+    public User findById(int id) {
         for (User user : users) {
             if (user.getId() == id) {
                 return user;
+            }
+        }
+        throw new UserNotFoundException(String.format("ID[%d] not found", id));
+    }
+
+    public void deleteById(int id) {
+        Iterator<User> iterator = users.iterator();
+
+        while (iterator.hasNext()) {
+            User user = iterator.next();
+
+            if (user.getId() == id) {
+                iterator.remove();
+                return;
             }
         }
         throw new UserNotFoundException(String.format("ID[%d] not found", id));
