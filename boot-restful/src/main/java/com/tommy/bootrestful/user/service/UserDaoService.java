@@ -27,6 +27,9 @@ public class UserDaoService {
             int userCount = users.size();
             user.calculateUserId(++userCount);
         }
+        if (user.getJoinedDate() == null) {
+            user.updateJoinedDate(LocalDateTime.now());
+        }
         users.add(user);
         return user;
     }

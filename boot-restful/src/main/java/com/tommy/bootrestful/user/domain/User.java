@@ -22,4 +22,8 @@ public class User {
     public void calculateUserId(long userId) {
         this.id = userId;
     }
+
+    public void updateJoinedDate(LocalDateTime joinedDate) {
+        this.joinedDate = joinedDate;
+    }
 }
