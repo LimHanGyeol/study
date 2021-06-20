@@ -1,7 +1,10 @@
 package com.tommy.bootrestful.common.exception;
 
 import com.tommy.bootrestful.user.exception.UserNotFoundException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -26,5 +29,16 @@ public class CommonExceptionAdvice extends ResponseEntityExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage(), request.getDescription(false), LocalDateTime.now());
 
         return ResponseEntity.status(NOT_FOUND).body(exceptionResponse);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+
+        String message = "Validation Failed";
+        ExceptionResponse exceptionResponse = new ExceptionResponse(message, ex.getBindingResult().toString(), LocalDateTime.now());
+        return ResponseEntity.badRequest().body(exceptionResponse);
     }
 }
