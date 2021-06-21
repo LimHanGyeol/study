@@ -1,7 +1,6 @@
 package com.tommy.bootrestful.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,8 @@ import java.time.LocalDateTime;
  */
 @Getter
 @NoArgsConstructor
-@JsonIgnoreProperties(value = {"password"})
+//@JsonIgnoreProperties(value = {"password"})
+@JsonFilter("UserInfo")
 public class User {
 
     private Long id;
@@ -26,24 +26,16 @@ public class User {
     @Past
     private LocalDateTime joinedDate;
 
-    @JsonIgnore
     private String password;
 
-    @JsonIgnore
-    private String ssm;
+    private String ssn;
 
-    public User(Long id, String name, LocalDateTime joinedDate, String password, String ssm) {
+    public User(Long id, String name, LocalDateTime joinedDate, String password, String ssn) {
         this.id = id;
         this.name = name;
         this.joinedDate = joinedDate;
         this.password = password;
-        this.ssm = ssm;
-    }
-
-    public User(Long id, String name, LocalDateTime joinedDate) {
-        this.id = id;
-        this.name = name;
-        this.joinedDate = joinedDate;
+        this.ssn = ssn;
     }
 
     public void calculateUserId(long userId) {
