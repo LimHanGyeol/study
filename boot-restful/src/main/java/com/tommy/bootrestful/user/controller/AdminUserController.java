@@ -22,22 +22,31 @@ public class AdminUserController {
     private final UserDaoService userDaoService;
 
     @GetMapping("/users")
-    public List<User> findAllUsers() {
-        return userDaoService.findAll();
+    public MappingJacksonValue findAllUsers() {
+        List<User> users = userDaoService.findAll();
+
+        FilterProvider filters = createUserInfoFilters();
+        return createMappingValue(users, filters);
     }
 
     @GetMapping("/users/{id}")
     public MappingJacksonValue findUserById(@PathVariable(name = "id") int userId) {
         User findUser = userDaoService.findById(userId);
 
+        FilterProvider filters = createUserInfoFilters();
+        return createMappingValue(findUser, filters);
+    }
+
+    private MappingJacksonValue createMappingValue(Object userData, FilterProvider filters) {
+        MappingJacksonValue mappingValue = new MappingJacksonValue(userData);
+        mappingValue.setFilters(filters);
+        return mappingValue;
+    }
+
+    private FilterProvider createUserInfoFilters() {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
                 .filterOutAllExcept("id", "name", "joinedDate", "ssn");
 
-        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo", filter);
-
-        MappingJacksonValue mappingValue = new MappingJacksonValue(findUser);
-        mappingValue.setFilters(filters);
-
-        return mappingValue;
+        return new SimpleFilterProvider().addFilter("UserInfo", filter);
     }
 }
