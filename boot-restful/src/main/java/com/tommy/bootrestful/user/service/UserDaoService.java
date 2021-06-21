@@ -15,9 +15,9 @@ public class UserDaoService {
     private static List<User> users = new ArrayList<>();
 
     static {
-        users.add(new User(1L, "Tommy", LocalDateTime.now()));
-        users.add(new User(2L, "Hangyeol", LocalDateTime.now()));
-        users.add(new User(3L, "Louie", LocalDateTime.now()));
+        users.add(new User(1L, "Tommy", LocalDateTime.now(), "pass1", "701010-1111111"));
+        users.add(new User(2L, "Hangyeol", LocalDateTime.now(), "pass2", "801010-2222222"));
+        users.add(new User(3L, "Louie", LocalDateTime.now(), "pass3", "901010-1111111"));
     }
 
     public List<User> findAll() {

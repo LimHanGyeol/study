@@ -1,5 +1,7 @@
 package com.tommy.bootrestful.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,8 +9,13 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+/**
+ * JsonIgnore 어노테이션을 사용하지 않고,
+ * JsonIgnoreProperties 어노테이션으로 전역적인 필드 제어가 가능하다.
+ */
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties(value = {"password"})
 public class User {
 
     private Long id;
@@ -18,6 +25,20 @@ public class User {
 
     @Past
     private LocalDateTime joinedDate;
+
+    @JsonIgnore
+    private String password;
+
+    @JsonIgnore
+    private String ssm;
+
+    public User(Long id, String name, LocalDateTime joinedDate, String password, String ssm) {
+        this.id = id;
+        this.name = name;
+        this.joinedDate = joinedDate;
+        this.password = password;
+        this.ssm = ssm;
+    }
 
     public User(Long id, String name, LocalDateTime joinedDate) {
         this.id = id;
