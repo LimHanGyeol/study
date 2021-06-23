@@ -48,6 +48,28 @@ public class AdminUserController {
         return createMappingValue(userV2, filters);
     }
 
+    /**
+     * Request Param을 이용한 Version 관리
+     */
+    @GetMapping(value = "/users/{id}", params = "version=3")
+    public MappingJacksonValue findUserByIdV3(@PathVariable(name = "id") int userId) {
+        User findUser = userDaoService.findById(userId);
+
+        FilterProvider filters = createUserInfoFilters("ssn", "UserInfo");
+        return createMappingValue(findUser, filters);
+    }
+
+    /**
+     * HTTP Header를 이용한 Version 관리
+     */
+    @GetMapping(value = "/users/{id}", headers = "X-API-VERSION=4")
+    public MappingJacksonValue findUserByIdV4(@PathVariable(name = "id") int userId) {
+        User findUser = userDaoService.findById(userId);
+
+        FilterProvider filters = createUserInfoFilters("ssn", "UserInfo");
+        return createMappingValue(findUser, filters);
+    }
+
     private FilterProvider createUserInfoFilters(String expect, String filterName) {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
                 .filterOutAllExcept("id", "name", "joinedDate", expect);
