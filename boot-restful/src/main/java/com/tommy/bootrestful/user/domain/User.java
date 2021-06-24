@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 //@JsonIgnoreProperties(value = {"password"})
-@JsonFilter("UserInfo")
+@JsonFilter("UserInfo") // HATEOAS 테스트 시 주석
 public class User {
 
     private Long id;
