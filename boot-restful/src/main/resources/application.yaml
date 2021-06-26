@@ -1,6 +1,17 @@
 spring:
   messages:
     basename: messages # 다국어파일의 이름을 messages로 설정한다.
+  h2:
+    console:
+      enabled: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb
+
+  jpa:
+    show-sql: true
 
 management:
   endpoints:
