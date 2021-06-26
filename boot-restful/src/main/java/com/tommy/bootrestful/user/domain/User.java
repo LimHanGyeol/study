@@ -3,9 +3,14 @@ package com.tommy.bootrestful.user.domain;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -18,9 +23,11 @@ import java.time.LocalDateTime;
 //@JsonFilter("UserInfo") // HATEOAS 테스트 시 주석
 @ApiModel(description = "사용자 상세 정보를 위한 도메인 객체")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class User {
 
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(min = 2, message = "Name은 2글자 이상 입력해주세요.")
