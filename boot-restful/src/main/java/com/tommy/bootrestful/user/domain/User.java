@@ -1,19 +1,19 @@
 package com.tommy.bootrestful.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.tommy.bootrestful.post.Post;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JsonIgnore 어노테이션을 사용하지 않고,
@@ -43,6 +43,9 @@ public class User {
 
     @ApiModelProperty(notes = "사용자 주민번호를 입력해주세요.")
     private String ssn;
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts = new ArrayList<>();
 
     public User(Long id, String name, LocalDateTime joinedDate, String password, String ssn) {
         this.id = id;
