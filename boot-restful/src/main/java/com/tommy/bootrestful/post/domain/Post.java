@@ -1,5 +1,6 @@
-package com.tommy.bootrestful.post;
+package com.tommy.bootrestful.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tommy.bootrestful.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Post {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 
     public Post(Long id, String description, User user) {

@@ -1,7 +1,6 @@
 package com.tommy.bootrestful.user.domain;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.tommy.bootrestful.post.Post;
+import com.tommy.bootrestful.post.domain.Post;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
@@ -45,7 +44,7 @@ public class User {
     private String ssn;
 
     @OneToMany(mappedBy = "user")
-    private List<Post> posts = new ArrayList<>();
+    private final List<Post> posts = new ArrayList<>();
 
     public User(Long id, String name, LocalDateTime joinedDate, String password, String ssn) {
         this.id = id;

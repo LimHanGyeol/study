@@ -1,5 +1,6 @@
 package com.tommy.bootrestful.user.controller;
 
+import com.tommy.bootrestful.post.domain.Post;
 import com.tommy.bootrestful.user.domain.User;
 import com.tommy.bootrestful.user.domain.UserRepository;
 import com.tommy.bootrestful.user.exception.UserNotFoundException;
@@ -54,5 +55,13 @@ public class UserJpaController {
     public ResponseEntity<?> deleteUser(@PathVariable(name = "id") long userId) {
         userRepository.deleteById(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users/{id}/posts")
+    public List<Post> findAllPostsByUserId(@PathVariable(name = "id") long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("ID[%d] not found", id)));
+
+        return user.getPosts();
     }
 }
