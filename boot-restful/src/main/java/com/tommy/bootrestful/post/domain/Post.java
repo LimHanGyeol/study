@@ -26,4 +26,9 @@ public class Post {
         this.description = description;
         this.user = user;
     }
+
+    public void registerAuthor(User user) {
+        this.user = user;
+        user.writePost(this);
+    }
 }

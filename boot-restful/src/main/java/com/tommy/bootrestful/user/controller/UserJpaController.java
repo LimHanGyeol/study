@@ -3,7 +3,7 @@ package com.tommy.bootrestful.user.controller;
 import com.tommy.bootrestful.post.domain.Post;
 import com.tommy.bootrestful.user.domain.User;
 import com.tommy.bootrestful.user.domain.UserRepository;
-import com.tommy.bootrestful.user.exception.UserNotFoundException;
+import com.tommy.bootrestful.user.service.UserJpaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -23,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class UserJpaController {
 
     private final UserRepository userRepository;
+    private final UserJpaService userJpaService;
 
     @GetMapping("/users")
     public List<User> findAllUsers() {
@@ -31,8 +32,7 @@ public class UserJpaController {
 
     @GetMapping("/users/{id}")
     public EntityModel<User> findUserById(@PathVariable long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format("ID[%d] not found", id)));
+        User user = userJpaService.findByUserId(id);
 
         EntityModel<User> entityModel = EntityModel.of(user);
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).findAllUsers());
@@ -59,8 +59,7 @@ public class UserJpaController {
 
     @GetMapping("/users/{id}/posts")
     public List<Post> findAllPostsByUserId(@PathVariable(name = "id") long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format("ID[%d] not found", id)));
+        User user = userJpaService.findByUserId(id);
 
         return user.getPosts();
     }

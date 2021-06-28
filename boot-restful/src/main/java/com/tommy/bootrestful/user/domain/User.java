@@ -61,4 +61,8 @@ public class User {
     public void updateJoinedDate(LocalDateTime joinedDate) {
         this.joinedDate = joinedDate;
     }
+
+    public void writePost(Post post) {
+        this.posts.add(post);
+    }
 }
