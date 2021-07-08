@@ -3,29 +3,44 @@ package com.tommy.bootrest.event.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Setter
 @Getter
 @NoArgsConstructor
+@Entity
 public class Event {
 
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String description;
+
     private String location;
+
     private int basePrice; // optional
+
     private int maxPrice; // optional
+
     private int limitOfEnrollment;
+
     private boolean offline;
+
     private boolean free;
+
+    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
+
     private LocalDateTime beginEnrollmentDateTime;
+
     private LocalDateTime closeEnrollmentDateTime;
+
     private LocalDateTime beginEventDateTime;
+
     private LocalDateTime endEventDateTime;
 
     @Builder
