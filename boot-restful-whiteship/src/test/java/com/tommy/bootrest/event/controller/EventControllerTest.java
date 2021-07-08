@@ -5,6 +5,7 @@ import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventStatus;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// TODO : 리팩토링 시 MockMvc UTF-8 설정 해주기
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class EventControllerTest {
@@ -34,6 +36,7 @@ class EventControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("정상적으로 이벤트를 생성할 경우")
     void create_event() throws Exception {
         // given
         EventCreateRequest eventCreateRequest = newEventCreateRequestInstance();
@@ -56,6 +59,7 @@ class EventControllerTest {
     }
 
     @Test
+    @DisplayName("이벤트 생성 시 허용하지 않은 값이 들어올 경우")
     void create_event_bad_request() throws Exception {
         // given
         Event event = newEventInstance();
@@ -72,6 +76,7 @@ class EventControllerTest {
     }
 
     @Test
+    @DisplayName("이벤트 생성 시 비어있는 값이 있을 경우")
     void create_event_bad_request_empty_input() throws Exception {
         // given
         EventCreateRequest eventCreateRequest = EventCreateRequest.builder().build();
@@ -88,6 +93,7 @@ class EventControllerTest {
     }
 
     @Test
+    @DisplayName("이벤트 생성 시 잘못된 조건이 있을 경우")
     void create_event_bad_request_wrong_input() throws Exception {
         // given
         EventCreateRequest eventCreateRequest = EventCreateRequest.builder()
