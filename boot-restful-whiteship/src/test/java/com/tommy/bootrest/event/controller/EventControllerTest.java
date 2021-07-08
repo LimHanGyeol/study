@@ -87,6 +87,33 @@ class EventControllerTest {
         response.andExpect(status().isBadRequest());
     }
 
+    @Test
+    void create_event_bad_request_wrong_input() throws Exception {
+        // given
+        EventCreateRequest eventCreateRequest = EventCreateRequest.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
+                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
+                .beginEventDateTime(LocalDateTime.of(2020, 7, 7, 20, 0))
+                .endEventDateTime(LocalDateTime.of(2020, 7, 6, 22, 0))
+                .basePrice(10000)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타트업 팩토리")
+                .build();
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/events")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventCreateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
+
     private EventCreateRequest newEventCreateRequestInstance() {
         return EventCreateRequest.builder()
                 .name("Spring")

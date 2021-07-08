@@ -3,6 +3,7 @@ package com.tommy.bootrest.event.controller;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
+import com.tommy.bootrest.event.dto.EventValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class EventController {
 
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
+    private final EventValidator eventValidator;
 
     @PostMapping
     public ResponseEntity<Event> createEvent(@Valid @RequestBody EventCreateRequest eventCreateRequest,
@@ -32,6 +34,11 @@ public class EventController {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
+        eventValidator.validate(eventCreateRequest, errors);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Event event = modelMapper.map(eventCreateRequest, Event.class);
         Event savedEvent = eventRepository.save(event);
 
