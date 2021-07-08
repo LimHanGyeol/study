@@ -3,10 +3,12 @@ package com.tommy.bootrest.event.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Setter
 @Getter
 @NoArgsConstructor
 public class Event {
