@@ -89,7 +89,10 @@ class EventControllerTest {
         ).andDo(print());
 
         // then
-        response.andExpect(status().isBadRequest());
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists());
     }
 
     @Test

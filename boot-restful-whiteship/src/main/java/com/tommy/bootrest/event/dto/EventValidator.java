@@ -19,8 +19,12 @@ public class EventValidator {
         int basePrice = eventCreateRequest.getBasePrice();
         int maxPrice = eventCreateRequest.getMaxPrice();
         if (basePrice > maxPrice && maxPrice > 0) {
+            // field Error
             errors.rejectValue("basePrice", "wrongValue", "BasePrice is wrong");
             errors.rejectValue("maxPrice", "wrongValue", "MaxPrice is wrong");
+
+            // global Error
+            errors.reject("wrongPrices", "Values to prices are wrong");
         }
     }
 
