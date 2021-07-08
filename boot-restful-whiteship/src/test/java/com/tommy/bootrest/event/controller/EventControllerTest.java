@@ -71,6 +71,22 @@ class EventControllerTest {
         response.andExpect(status().isBadRequest());
     }
 
+    @Test
+    void create_event_bad_request_empty_input() throws Exception {
+        // given
+        EventCreateRequest eventCreateRequest = EventCreateRequest.builder().build();
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/events")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventCreateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
+
     private EventCreateRequest newEventCreateRequestInstance() {
         return EventCreateRequest.builder()
                 .name("Spring")
