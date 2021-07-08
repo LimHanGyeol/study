@@ -2,17 +2,18 @@ package com.tommy.bootrest.event.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tommy.bootrest.event.domain.Event;
-import com.tommy.bootrest.event.domain.EventRepository;
+import com.tommy.bootrest.event.domain.EventStatus;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -21,7 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class EventControllerTest {
 
     @Autowired
@@ -30,14 +32,10 @@ class EventControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private EventRepository eventRepository;
-
     @Test
     void create_event() throws Exception {
         // given
         Event event = newEventInstance();
-        given(eventRepository.save(event)).willReturn(event);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/events")
@@ -51,12 +49,13 @@ class EventControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(LOCATION))
-                .andExpect(header().string(CONTENT_TYPE, APPLICATION_JSON_VALUE));
+                .andExpect(header().string(CONTENT_TYPE, APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
 
     private Event newEventInstance() {
         return Event.builder()
-                .id(10L)
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
