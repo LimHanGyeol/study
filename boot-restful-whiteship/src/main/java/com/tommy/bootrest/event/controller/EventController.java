@@ -40,6 +40,9 @@ public class EventController {
         }
 
         Event event = modelMapper.map(eventCreateRequest, Event.class);
+        event.update();
+        event.updateLocation();
+
         Event savedEvent = eventRepository.save(event);
 
         URI location = linkTo(this.getClass())

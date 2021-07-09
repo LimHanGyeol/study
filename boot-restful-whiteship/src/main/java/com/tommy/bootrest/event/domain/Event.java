@@ -63,6 +63,22 @@ public class Event {
         this.endEventDateTime = endEventDateTime;
     }
 
+    public void update() {
+        if (this.basePrice == 0 && this.maxPrice == 0) {
+            this.free = true;
+            return;
+        }
+        this.free = false;
+    }
+
+    public void updateLocation() {
+        if (this.location == null || this.location.isBlank()) {
+            this.offline = false;
+            return;
+        }
+        this.offline = true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

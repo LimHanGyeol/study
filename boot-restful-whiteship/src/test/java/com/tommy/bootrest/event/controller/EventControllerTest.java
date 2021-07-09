@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventStatus;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,8 @@ class EventControllerTest {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(LOCATION))
                 .andExpect(header().string(CONTENT_TYPE, APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
 
