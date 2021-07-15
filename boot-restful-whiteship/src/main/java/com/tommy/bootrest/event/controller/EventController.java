@@ -3,9 +3,11 @@ package com.tommy.bootrest.event.controller;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
+import com.tommy.bootrest.event.dto.EventResource;
 import com.tommy.bootrest.event.dto.EventValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,10 +47,14 @@ public class EventController {
 
         Event savedEvent = eventRepository.save(event);
 
-        URI location = linkTo(this.getClass())
-                .slash(savedEvent.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(event);
+        WebMvcLinkBuilder selfLinkBuilder = linkTo(this.getClass()).slash(savedEvent.getId());
+        URI location = selfLinkBuilder.toUri();
+
+        EventResource eventResource = new EventResource(event);
+        eventResource.add(linkTo(EventController.class).withRel("query-events"));
+        eventResource.add(selfLinkBuilder.withRel("update-event"));
+
+        return ResponseEntity.created(location).body(eventResource);
     }
 }
 
