@@ -64,16 +64,13 @@ class EventControllerTest {
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
-                .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.query-events").exists())
-                .andExpect(jsonPath("_links.update-event").exists())
-
                 .andDo(document("create-event", // 문서의 이름
                         links(
                                 halLinks(),
                                 linkWithRel("self").description("link to self"),
                                 linkWithRel("query-events").description("link to query events"),
-                                linkWithRel("update-event").description("link to update an existing events")
+                                linkWithRel("update-event").description("link to update an existing events"),
+                                linkWithRel("profile").description("link to profile")
                         ),
                         requestHeaders(
                                 headerWithName(ACCEPT).description("accept header"),
@@ -112,8 +109,8 @@ class EventControllerTest {
                                 fieldWithPath("eventStatus").description("event status"),
                                 fieldWithPath("_links.self.href").description("link to self"),
                                 fieldWithPath("_links.query-events.href").description("link to query events"),
-                                fieldWithPath("_links.update-event.href").description("link to update existing event")
-
+                                fieldWithPath("_links.update-event.href").description("link to update existing event"),
+                                fieldWithPath("_links.profile.href").description("link to profile")
                         )
                 ));
     }
@@ -228,4 +225,7 @@ class EventControllerTest {
  *
  * Rest Docs의 document에 들어오는 identifier는 문서의 이름이 된다.
  * description에는 좀 더 의미있는 내용을 적어주면 좋을 것 이다.
+ *
+ * mockMvc의 response 검증에서 rest docs의 경우 documents 에서 검증을 하고 있으므로,
+ * jsonPath로 테스트하지 않아도 된다.
  */
