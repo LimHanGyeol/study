@@ -1,5 +1,6 @@
 package com.tommy.bootrest.event.controller;
 
+import com.tommy.bootrest.common.ErrorResource;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
@@ -35,11 +36,11 @@ public class EventController {
     public ResponseEntity createEvent(@Valid @RequestBody EventCreateRequest eventCreateRequest,
                                              Errors errors) {
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(new ErrorResource(errors));
         }
         eventValidator.validate(eventCreateRequest, errors);
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(new ErrorResource(errors));
         }
 
         Event event = modelMapper.map(eventCreateRequest, Event.class);
@@ -68,4 +69,6 @@ public class EventController {
  * spring-starter-validation을 이용하여 RequestBody의 Validation을 수행할 수 있다.
  * Validation이 완료되면 해당 결과가 Errors 객체에 담긴다.
  * Errors 내부의 값을 확인하여 error가 존재할 경우 BadRequest를 보내는 식의 처리를 할 수 있다.
+ *
+ * badRequest하는 부분을 controllerAdvice로 변경을 고려
  */
