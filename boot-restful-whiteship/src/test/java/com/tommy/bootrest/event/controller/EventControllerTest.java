@@ -1,7 +1,6 @@
 package com.tommy.bootrest.event.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tommy.bootrest.common.RestDocsConfiguration;
+import com.tommy.bootrest.common.AcceptanceTest;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.domain.EventStatus;
@@ -10,13 +9,6 @@ import com.tommy.bootrest.event.dto.EventUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
@@ -34,18 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // TODO : 리팩토링 시 MockMvc UTF-8 설정 해주기
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(value = "test")
-class EventControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class EventControllerTest extends AcceptanceTest {
 
     @Autowired
     private EventRepository eventRepository;
