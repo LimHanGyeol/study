@@ -8,14 +8,15 @@ import com.tommy.bootrest.event.dto.EventResource;
 import com.tommy.bootrest.event.dto.EventValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -24,7 +25,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/events", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/events", produces = APPLICATION_JSON_VALUE)
 @RestController
 public class EventController {
 
@@ -32,9 +33,9 @@ public class EventController {
     private final ModelMapper modelMapper;
     private final EventValidator eventValidator;
 
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity createEvent(@Valid @RequestBody EventCreateRequest eventCreateRequest,
-                                             Errors errors) {
+                                      Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(new ErrorResource(errors));
         }
@@ -58,6 +59,14 @@ public class EventController {
         eventResource.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 
         return ResponseEntity.created(location).body(eventResource);
+    }
+
+    @GetMapping
+    public ResponseEntity queryEvent(Pageable pageable, PagedResourcesAssembler<Event> assembler) {
+        Page<Event> findAll = eventRepository.findAll(pageable);
+        PagedModel<EventResource> eventResources = assembler.toModel(findAll, EventResource::new);
+        eventResources.add(Link.of("/docs/index.html#resources-events-list").withRel("profile"));
+        return ResponseEntity.ok(eventResources);
     }
 }
 
