@@ -68,6 +68,16 @@ public class EventController {
         eventResources.add(Link.of("/docs/index.html#resources-events-list").withRel("profile"));
         return ResponseEntity.ok(eventResources);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getEvent(@PathVariable Long id) {
+        // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기
+        Event event = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        EventResource eventResource = new EventResource(event);
+        eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
 }
 
 /*
