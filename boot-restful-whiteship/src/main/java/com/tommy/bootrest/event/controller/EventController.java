@@ -5,6 +5,7 @@ import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventResource;
+import com.tommy.bootrest.event.dto.EventUpdateRequest;
 import com.tommy.bootrest.event.dto.EventValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -76,6 +77,31 @@ public class EventController {
 
         EventResource eventResource = new EventResource(event);
         eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
+
+    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity updateEvent(@PathVariable Long id,
+                                      @Valid @RequestBody EventUpdateRequest eventUpdateRequest,
+                                      Errors errors) {
+        // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기 notFound
+        Event savedEvent = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+        // DTO 검증 Validation. 제네릭 염두 하기
+        // eventValidator.validate(eventUpdateRequest, errors);
+        // if (errors.hasErrors()) {
+            // return ResponseEntity.badRequest().build();
+        // }
+
+        savedEvent.updateEvent(eventUpdateRequest.getName(), eventUpdateRequest.getDescription());
+        // service layer와 transactional 을 적용하지 않아 update를 수동으로 해준다.
+        Event updatedEvent = eventRepository.save(savedEvent);
+
+        EventResource eventResource = new EventResource(updatedEvent);
+        eventResource.add(Link.of("/docs/index.html#resources-events-update").withRel("profile"));
         return ResponseEntity.ok(eventResource);
     }
 }

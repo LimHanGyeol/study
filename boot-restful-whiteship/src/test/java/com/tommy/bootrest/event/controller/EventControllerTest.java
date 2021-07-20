@@ -6,6 +6,7 @@ import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.domain.EventStatus;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
+import com.tommy.bootrest.event.dto.EventUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -127,7 +127,7 @@ class EventControllerTest {
     @DisplayName("이벤트 생성 시 허용하지 않은 값이 들어올 경우")
     void create_event_bad_request() throws Exception {
         // given
-        Event event = newEventInstance();
+        Event event = newEventInstance(1L);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
@@ -239,6 +239,93 @@ class EventControllerTest {
                 .andDo(document("query-events"));
     }
 
+    @Test
+    @DisplayName("이벤트를 정상적으로 수정하기")
+    void updateEvent() throws Exception {
+        // given
+        String updatedEventName = "updated event";
+        String updatedEventDescription = "updated description";
+
+        Event event = newEventInstance(100);
+        Event savedEvent = eventRepository.save(event);
+
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(savedEvent);
+        eventUpdateRequest.updateName(updatedEventName);
+        eventUpdateRequest.updateDescription(updatedEventDescription);
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/events/{id}", savedEvent.getId())
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventUpdateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(updatedEventName))
+                .andExpect(jsonPath("description").value(updatedEventDescription))
+                .andExpect(jsonPath("_links.self").exists())
+                .andDo(document("update-event"));
+    }
+
+    @Test
+    @DisplayName("입력값이 비어있는 경우에 이벤트 수정 실패")
+    void invalidUpdateEventV1() throws Exception {
+        // given
+        Event event = generateEvent(1);
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest();
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventUpdateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("입력값이 잘못된 경우에 이벤트 수정 실패")
+    void invalidUpdateEventV2() throws Exception {
+        // given
+        Event event = newEventInstance(1L);
+        Event savedEvent = eventRepository.save(event);
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(savedEvent);
+
+        eventUpdateRequest.updateBasePrice(20000);
+        eventUpdateRequest.updateMaxPrice(1000);
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventUpdateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 이벤트 수정 실패")
+    void invalidUpdateEventV3() throws Exception {
+        // given
+        Event event = newEventInstance(1L);
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(event);
+
+        // when
+        ResultActions response = mockMvc.perform(put("api/events/234")
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(eventUpdateRequest))
+        ).andDo(print());
+
+        // then
+        response.andExpect(status().isNotFound());
+    }
+
     private Event generateEvent(int index) {
         Event event = Event.builder()
                 .name("event" + index)
@@ -263,9 +350,9 @@ class EventControllerTest {
                 .build();
     }
 
-    private Event newEventInstance() {
+    private Event newEventInstance(long index) {
         return Event.builder()
-                .id(10L)
+                .id(index)
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
