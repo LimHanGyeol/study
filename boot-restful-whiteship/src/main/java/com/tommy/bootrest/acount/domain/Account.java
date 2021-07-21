@@ -1,6 +1,7 @@
 package com.tommy.bootrest.acount.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Set<AccountRole> roles;
 
+    @Builder
     public Account(Long id, String email, String password, Set<AccountRole> roles) {
         this.id = id;
         this.email = email;
