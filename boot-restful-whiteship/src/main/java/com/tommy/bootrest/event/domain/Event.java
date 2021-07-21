@@ -1,5 +1,6 @@
 package com.tommy.bootrest.event.domain;
 
+import com.tommy.bootrest.acount.domain.Account;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,9 @@ public class Event {
     private LocalDateTime beginEventDateTime;
 
     private LocalDateTime endEventDateTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Account manager;
 
     @Builder
     public Event(Long id, String name, String description, String location, int basePrice, int maxPrice, int limitOfEnrollment, boolean offline, boolean free, EventStatus eventStatus, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime, LocalDateTime beginEventDateTime, LocalDateTime endEventDateTime) {
