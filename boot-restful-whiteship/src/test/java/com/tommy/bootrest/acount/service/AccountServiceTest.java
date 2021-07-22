@@ -1,7 +1,6 @@
 package com.tommy.bootrest.acount.service;
 
 import com.tommy.bootrest.acount.domain.Account;
-import com.tommy.bootrest.acount.domain.AccountRepository;
 import com.tommy.bootrest.acount.domain.AccountRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ class AccountServiceTest {
     private AccountService accountService;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void loadUserByUsername() {
@@ -38,13 +38,13 @@ class AccountServiceTest {
                 .password(password)
                 .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                 .build();
-        accountRepository.save(account);
+        accountService.saveAccount(account);
 
         // when
         UserDetails userDetails = accountService.loadUserByUsername(username);
 
         // then
-        assertThat(userDetails.getPassword()).isEqualTo(password);
+        assertThat(passwordEncoder.matches(password, userDetails.getPassword())).isTrue();
     }
 
     @Test

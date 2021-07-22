@@ -31,6 +31,10 @@ public class Account {
         this.roles = roles;
     }
 
+    public void encodePassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

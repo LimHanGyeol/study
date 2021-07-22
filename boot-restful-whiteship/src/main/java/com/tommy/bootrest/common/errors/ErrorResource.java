@@ -1,4 +1,4 @@
-package com.tommy.bootrest.common;
+package com.tommy.bootrest.common.errors;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.tommy.bootrest.index.IndexController;

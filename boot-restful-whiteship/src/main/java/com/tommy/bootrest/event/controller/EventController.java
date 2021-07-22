@@ -1,6 +1,6 @@
 package com.tommy.bootrest.event.controller;
 
-import com.tommy.bootrest.common.ErrorResource;
+import com.tommy.bootrest.common.errors.ErrorResource;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
