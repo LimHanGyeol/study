@@ -68,7 +68,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventCreateRequest))
@@ -142,7 +142,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(event))
@@ -160,7 +160,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventCreateRequest))
@@ -193,7 +193,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventCreateRequest))
@@ -207,10 +207,12 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("한건의 이벤트 조회")
     void getEvent() throws Exception {
         // given
-        Event event = generateEvent(1);
+        Account account = createAccount();
+        Event event = newEventInstance(1, account);
+        Event savedEvent = eventRepository.save(event);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/events/{id}", event.getId()));
+        ResultActions response = mockMvc.perform(get("/api/events/{id}", savedEvent.getId()));
 
         // then
         response.andExpect(status().isOk())
@@ -261,7 +263,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .param("page", "1")
                 .param("size", "10")
                 .param("sort", "name,DESC"))
@@ -281,10 +283,11 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("이벤트를 정상적으로 수정하기")
     void updateEvent() throws Exception {
         // given
+        Account account = createAccount();
         String updatedEventName = "updated event";
         String updatedEventDescription = "updated description";
 
-        Event event = newEventInstance(100);
+        Event event = newEventInstance(100, account);
         Event savedEvent = eventRepository.save(event);
 
         EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(savedEvent);
@@ -293,7 +296,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(put("/api/events/{id}", savedEvent.getId())
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(false))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventUpdateRequest))
@@ -316,7 +319,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventUpdateRequest))
@@ -339,7 +342,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventUpdateRequest))
@@ -358,7 +361,7 @@ class EventControllerTest extends AcceptanceTest {
 
         // when
         ResultActions response = mockMvc.perform(put("api/events/234")
-                .header(AUTHORIZATION, getBearerAccessToken())
+                .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(eventUpdateRequest))
@@ -392,7 +395,17 @@ class EventControllerTest extends AcceptanceTest {
                 .build();
     }
 
+    private Event newEventInstance(long index, Account account) {
+        Event event = buildEvent(index);
+        event.createdEventByManager(account);
+        return event;
+    }
+
     private Event newEventInstance(long index) {
+        return buildEvent(index);
+    }
+
+    private Event buildEvent(long index) {
         return Event.builder()
                 .id(index)
                 .name("Spring")
@@ -411,24 +424,20 @@ class EventControllerTest extends AcceptanceTest {
                 .build();
     }
 
-    private String getBearerAccessToken() throws Exception {
+    private String getBearerAccessToken(boolean needToCreateAccount) throws Exception {
         // given
         String clientId = appProperties.getClientId();
         String clientSecret = appProperties.getClientSecret();
-        String username = appProperties.getUserUsername();
-        String password = appProperties.getUserPassword();
-        Account account = Account.builder()
-                .email(username)
-                .password(password)
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        accountService.saveAccount(account);
+
+        if (needToCreateAccount) {
+            createAccount();
+        }
 
         // when
         ResultActions response = mockMvc.perform(post("/oauth/token")
                 .with(httpBasic(clientId, clientSecret))
-                .param("username", username)
-                .param("password", password)
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password")
                 .accept(MediaType.APPLICATION_JSON)
         ).andDo(print());
@@ -439,6 +448,17 @@ class EventControllerTest extends AcceptanceTest {
 
         Map map = objectMapper.readValue(responseBody, Map.class);
         return "Bearer" + map.get("access_token").toString();
+    }
+
+    private Account createAccount() {
+        String username = appProperties.getUserUsername();
+        String password = appProperties.getUserPassword();
+        Account account = Account.builder()
+                .email(username)
+                .password(password)
+                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+                .build();
+        return accountService.saveAccount(account);
     }
 }
 
