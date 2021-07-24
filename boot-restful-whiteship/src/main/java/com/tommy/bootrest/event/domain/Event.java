@@ -1,6 +1,8 @@
 package com.tommy.bootrest.event.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tommy.bootrest.acount.domain.Account;
+import com.tommy.bootrest.acount.domain.AccountSerializer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,6 +49,7 @@ public class Event {
     private LocalDateTime endEventDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonSerialize(using = AccountSerializer.class)
     private Account manager;
 
     @Builder
