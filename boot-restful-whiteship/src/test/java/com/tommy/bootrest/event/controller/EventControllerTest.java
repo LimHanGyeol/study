@@ -6,6 +6,7 @@ import com.tommy.bootrest.acount.domain.AccountRepository;
 import com.tommy.bootrest.acount.domain.AccountRole;
 import com.tommy.bootrest.acount.service.AccountService;
 import com.tommy.bootrest.common.AcceptanceTest;
+import com.tommy.bootrest.common.config.AppProperties;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.domain.EventStatus;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -50,6 +50,9 @@ class EventControllerTest extends AcceptanceTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private AppProperties appProperties;
 
     @BeforeEach
     void setUp() {
@@ -386,10 +389,10 @@ class EventControllerTest extends AcceptanceTest {
 
     private String getBearerAccessToken() throws Exception {
         // given
-        String clientId = "myApp";
-        String clientSecret = "pass";
-        String username = "hangyeol@email.com";
-        String password = "hangyeol";
+        String clientId = appProperties.getClientId();
+        String clientSecret = appProperties.getClientSecret();
+        String username = appProperties.getUserUsername();
+        String password = appProperties.getUserPassword();
         Account account = Account.builder()
                 .email(username)
                 .password(password)
