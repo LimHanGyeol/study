@@ -232,7 +232,7 @@ class EventControllerTest extends AcceptanceTest {
     }
 
     @Test
-    @DisplayName("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+    @DisplayName("토큰을 갖지 않고 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
     void queryEvents() throws Exception {
         // given
         IntStream.range(0, 30).forEach(this::generateEvent);
@@ -250,6 +250,30 @@ class EventControllerTest extends AcceptanceTest {
                 .andExpect(jsonPath("_embedded.eventResourceList[0]._links.self").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
+                .andDo(document("query-events"));
+    }
+
+    @Test
+    @DisplayName("토큰을 갖고 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+    void queryEventsWithAuthentication() throws Exception {
+        // given
+        IntStream.range(0, 30).forEach(this::generateEvent);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/events")
+                .header(AUTHORIZATION, getBearerAccessToken())
+                .param("page", "1")
+                .param("size", "10")
+                .param("sort", "name,DESC"))
+                .andDo(print());
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_embedded.eventResourceList[0]._links.self").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.create-event").exists())
                 .andDo(document("query-events"));
     }
 

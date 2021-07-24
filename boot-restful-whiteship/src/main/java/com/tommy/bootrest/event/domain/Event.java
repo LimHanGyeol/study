@@ -88,6 +88,10 @@ public class Event {
         this.description = description;
     }
 
+    public void createdEventByManager(Account account) {
+        this.manager = account;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

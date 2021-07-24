@@ -1,5 +1,7 @@
 package com.tommy.bootrest.event.controller;
 
+import com.tommy.bootrest.acount.domain.Account;
+import com.tommy.bootrest.acount.domain.CurrentUser;
 import com.tommy.bootrest.common.errors.ErrorResource;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
@@ -15,6 +17,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +26,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/events", produces = APPLICATION_JSON_VALUE)
@@ -36,7 +39,8 @@ public class EventController {
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity createEvent(@Valid @RequestBody EventCreateRequest eventCreateRequest,
-                                      Errors errors) {
+                                      Errors errors,
+                                      @CurrentUser Account account) {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(new ErrorResource(errors));
         }
@@ -48,6 +52,7 @@ public class EventController {
         Event event = modelMapper.map(eventCreateRequest, Event.class);
         event.update();
         event.updateLocation();
+        event.createdEventByManager(account);
 
         Event savedEvent = eventRepository.save(event);
 
@@ -63,29 +68,44 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity queryEvent(Pageable pageable, PagedResourcesAssembler<Event> assembler) {
+    public ResponseEntity queryEvent(Pageable pageable,
+                                     PagedResourcesAssembler<Event> assembler,
+                                     @CurrentUser Account account) {
         Page<Event> findAll = eventRepository.findAll(pageable);
         PagedModel<EventResource> eventResources = assembler.toModel(findAll, EventResource::new);
         eventResources.add(Link.of("/docs/index.html#resources-events-list").withRel("profile"));
+        if (account != null) {
+            eventResources.add(linkTo(EventController.class).withRel("create-event"));
+        }
         return ResponseEntity.ok(eventResources);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getEvent(@PathVariable Long id) {
+    public ResponseEntity getEvent(@PathVariable Long id,
+                                   @CurrentUser Account account) {
         // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기
         Event event = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
         EventResource eventResource = new EventResource(event);
         eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
+
+        if (event.getManager().equals(account)) {
+            eventResource.add(linkTo(EventController.class).slash(event.getId()).withRel("update-event"));
+        }
+
         return ResponseEntity.ok(eventResource);
     }
 
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity updateEvent(@PathVariable Long id,
                                       @Valid @RequestBody EventUpdateRequest eventUpdateRequest,
-                                      Errors errors) {
+                                      Errors errors,
+                                      @CurrentUser Account account) {
         // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기 notFound
         Event savedEvent = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (!savedEvent.getManager().equals(account)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().build();
@@ -93,7 +113,7 @@ public class EventController {
         // DTO 검증 Validation. 제네릭 염두 하기
         // eventValidator.validate(eventUpdateRequest, errors);
         // if (errors.hasErrors()) {
-            // return ResponseEntity.badRequest().build();
+        // return ResponseEntity.badRequest().build();
         // }
 
         savedEvent.updateEvent(eventUpdateRequest.getName(), eventUpdateRequest.getDescription());
