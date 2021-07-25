@@ -1,4 +1,4 @@
-package com.tommy.bootrest.common.errors;
+package com.tommy.bootrest.common.exception;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

@@ -1,5 +1,6 @@
 package com.tommy.bootrest.common.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +8,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 /**
  * 현재 강의에서 사용한 spring-security-oauth2-autoconfigure 의존성은 사용되지 않는다.
@@ -24,9 +27,12 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
  * https://www.baeldung.com/spring-security-oauth-auth-server
  * https://www.baeldung.com/spring-security-oauth-resource-server
  */
+@RequiredArgsConstructor
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+    private final CharacterEncodingFilter characterEncodingFilter;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -35,6 +41,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(characterEncodingFilter, CsrfFilter.class);
+
         http.anonymous()
                 .and()
                 .authorizeRequests()
@@ -44,5 +52,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(new OAuth2AccessDeniedHandler());
+
     }
 }

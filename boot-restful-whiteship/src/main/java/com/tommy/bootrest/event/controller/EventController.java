@@ -2,13 +2,14 @@ package com.tommy.bootrest.event.controller;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.CurrentUser;
-import com.tommy.bootrest.common.errors.ErrorResource;
+import com.tommy.bootrest.common.exception.ErrorResource;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventResource;
 import com.tommy.bootrest.event.dto.EventUpdateRequest;
 import com.tommy.bootrest.event.dto.EventValidator;
+import com.tommy.bootrest.event.exception.EventNonExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -84,7 +85,8 @@ public class EventController {
     public ResponseEntity getEvent(@PathVariable Long id,
                                    @CurrentUser Account account) {
         // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기
-        Event event = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNonExistException("Event non Exist id : " + id));
 
         EventResource eventResource = new EventResource(event);
         eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
@@ -102,7 +104,8 @@ public class EventController {
                                       Errors errors,
                                       @CurrentUser Account account) {
         // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기 notFound
-        Event savedEvent = eventRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Event savedEvent = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNonExistException("Event non Exist id : " + id));
         if (!savedEvent.getManager().equals(account)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
