@@ -36,7 +36,26 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// TODO : 리팩토링 시 MockMvc UTF-8 설정 해주기
+/**
+ * MockMvc는 내부적으로 MockHttpServletRequest와 MockHttpServletResponse를 사용한다.
+ * MockHttpServletResponse는 내부적인 charset이 "ISO-8859-1"로 설정되어 있다.
+ * 그래서 mockMvc 테스트 응답의 경우 한글이 깨지는 경우가 있다.
+ * 이를 UTF-8로 변경하기 위해 application.properties에
+ * server.servlet.encoding.charset=utf-8
+ * server.servlet.encoding.force-response=true
+ * 두 설정을 추가했다.
+ * 이럴 경우 응답 값을 검증할때 content-type:application/json;charset=utf-8의 경우로 값이 나올 수 있다.
+ * Spring 5.2와 Spring Boot 2.2.0에서 content-type은 단일 값만 갖게 변경됐다. 이로인해 테스트가 실패할 수 있다.
+ * 이 부분을 염두해서 개발을 해야 한다.
+ * 현재는 properties에 정의했지만, 이는 CharacterEncodingFilter를 Bean으로 재정의하여 UTF-8을 지정하고,
+ * SecurityFilter에 CsrfFilter.class 앞에 정의하여 해결할 수도 있다.
+ *
+ * 참조
+ * http://honeymon.io/tech/2019/10/23/spring-deprecated-media-type.html
+ * https://namocom.tistory.com/832
+ * https://keichee.tistory.com/457
+ * https://stackoverflow.com/questions/20863489/characterencodingfilter-dont-work-together-with-spring-security-3-2-0/23051264#23051264
+ */
 class EventControllerTest extends AcceptanceTest {
 
     @Autowired
