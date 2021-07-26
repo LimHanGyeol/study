@@ -3,14 +3,12 @@ package com.tommy.bootrest.event.controller;
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.CurrentUser;
 import com.tommy.bootrest.event.domain.Event;
-import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventResource;
 import com.tommy.bootrest.event.dto.EventUpdateRequest;
 import com.tommy.bootrest.event.dto.EventValidator;
-import com.tommy.bootrest.event.exception.EventNonExistException;
+import com.tommy.bootrest.event.service.EventService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -19,7 +17,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,8 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 public class EventController {
 
-    private final EventRepository eventRepository;
-    private final ModelMapper modelMapper;
+    private final EventService eventService;
     private final EventValidator eventValidator;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
@@ -44,18 +40,12 @@ public class EventController {
 //        if (errors.hasErrors()) {
 //            return ResponseEntity.badRequest().body(new ErrorResource(errors));
 //        }
-
-        Event event = modelMapper.map(eventCreateRequest, Event.class);
-        event.update();
-        event.updateLocation();
-        event.createdEventByManager(account);
-
-        Event savedEvent = eventRepository.save(event);
+        Event savedEvent = eventService.saveEvent(eventCreateRequest, account);
 
         WebMvcLinkBuilder selfLinkBuilder = linkTo(this.getClass()).slash(savedEvent.getId());
         URI location = selfLinkBuilder.toUri();
 
-        EventResource eventResource = new EventResource(event);
+        EventResource eventResource = new EventResource(savedEvent);
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
         eventResource.add(selfLinkBuilder.withRel("update-event"));
         eventResource.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
@@ -67,7 +57,8 @@ public class EventController {
     public ResponseEntity queryEvent(Pageable pageable,
                                      PagedResourcesAssembler<Event> assembler,
                                      @CurrentUser Account account) {
-        Page<Event> findAll = eventRepository.findAll(pageable);
+        Page<Event> findAll = eventService.findAll(pageable);
+
         PagedModel<EventResource> eventResources = assembler.toModel(findAll, EventResource::new);
         eventResources.add(Link.of("/docs/index.html#resources-events-list").withRel("profile"));
         if (account != null) {
@@ -79,9 +70,7 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity getEvent(@PathVariable Long id,
                                    @CurrentUser Account account) {
-        // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNonExistException("Event non Exist id : " + id));
+        Event event = eventService.findEventById(id);
 
         EventResource eventResource = new EventResource(event);
         eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
@@ -96,27 +85,17 @@ public class EventController {
     @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity updateEvent(@PathVariable Long id,
                                       @Valid @RequestBody EventUpdateRequest eventUpdateRequest,
-                                      Errors errors,
                                       @CurrentUser Account account) {
-        // controllerAdvice, exceptionHandler로 ResourceCustomException 만들어 404 처리하기 notFound
-        Event savedEvent = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNonExistException("Event non Exist id : " + id));
-        if (!savedEvent.getManager().equals(account)) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-        }
 
-        if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().build();
+        Event updatedEvent = eventService.updateEvent(id, eventUpdateRequest);
+        if (!updatedEvent.getManager().equals(account)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
         // DTO 검증 Validation. 제네릭 염두 하기
         // eventValidator.validate(eventUpdateRequest, errors);
         // if (errors.hasErrors()) {
         // return ResponseEntity.badRequest().build();
         // }
-
-        savedEvent.updateEvent(eventUpdateRequest.getName(), eventUpdateRequest.getDescription());
-        // service layer와 transactional 을 적용하지 않아 update를 수동으로 해준다.
-        Event updatedEvent = eventRepository.save(savedEvent);
 
         EventResource eventResource = new EventResource(updatedEvent);
         eventResource.add(Link.of("/docs/index.html#resources-events-update").withRel("profile"));
