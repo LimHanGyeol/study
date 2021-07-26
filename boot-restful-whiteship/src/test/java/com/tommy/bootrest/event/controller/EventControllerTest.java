@@ -156,7 +156,8 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("이벤트 생성 시 허용하지 않은 값이 들어올 경우")
     void create_event_bad_request() throws Exception {
         // given
-        Event event = newEventInstance(1L);
+//        Event event = newEventInstance(1L);
+        EventCreateRequest event = newEventCreateRequestInstance();
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
@@ -269,7 +270,7 @@ class EventControllerTest extends AcceptanceTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
-                .andExpect(jsonPath("_embedded.eventResourceList[0]._links.self").exists())
+                .andExpect(jsonPath("_embedded.eventResponseList[0]._links.self").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andDo(document("query-events"));
@@ -292,7 +293,7 @@ class EventControllerTest extends AcceptanceTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
-                .andExpect(jsonPath("_embedded.eventResourceList[0]._links.self").exists())
+                .andExpect(jsonPath("_embedded.eventResponseList[0]._links.self").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andExpect(jsonPath("_links.create-event").exists())
@@ -330,7 +331,6 @@ class EventControllerTest extends AcceptanceTest {
                 .andDo(document("update-event"));
     }
 
-    @Disabled
     @Test
     @DisplayName("입력값이 비어있는 경우에 이벤트 수정 실패")
     void invalidUpdateEventV1() throws Exception {
@@ -398,6 +398,7 @@ class EventControllerTest extends AcceptanceTest {
                 .name("event" + index)
                 .description("test event")
                 .build();
+        event.createdEventByManager(createAccount(index));
 
         return eventRepository.save(event);
     }
@@ -472,8 +473,15 @@ class EventControllerTest extends AcceptanceTest {
         return "Bearer" + map.get("access_token").toString();
     }
 
+    private Account createAccount(int index) {
+        return generateAccount(appProperties.getUserUsername() + index);
+    }
+
     private Account createAccount() {
-        String username = appProperties.getUserUsername();
+        return generateAccount(appProperties.getUserUsername());
+    }
+
+    private Account generateAccount(String username) {
         String password = appProperties.getUserPassword();
         Account account = Account.builder()
                 .email(username)

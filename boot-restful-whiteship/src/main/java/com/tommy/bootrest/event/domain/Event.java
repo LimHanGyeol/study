@@ -95,6 +95,14 @@ public class Event {
         this.manager = account;
     }
 
+    public boolean validateEventManager(Account account) {
+        return this.manager.equals(account);
+    }
+
+    public long getManagerId() {
+        return manager.getId();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
