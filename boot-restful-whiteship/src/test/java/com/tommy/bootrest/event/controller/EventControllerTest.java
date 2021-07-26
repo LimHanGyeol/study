@@ -186,9 +186,11 @@ class EventControllerTest extends AcceptanceTest {
 
         // then
         response.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("status").value(400))
+                .andExpect(jsonPath("errors[0].field").exists())
+                .andExpect(jsonPath("errors[0].rejectedValue").exists())
                 .andExpect(jsonPath("errors[0].defaultMessage").exists())
-                .andExpect(jsonPath("errors[0].code").exists())
                 .andExpect(jsonPath("_links.index").exists());
     }
 

@@ -2,7 +2,6 @@ package com.tommy.bootrest.event.controller;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.CurrentUser;
-import com.tommy.bootrest.common.exception.ErrorResource;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
@@ -39,16 +38,12 @@ public class EventController {
     private final EventValidator eventValidator;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity createEvent(@Valid @RequestBody EventCreateRequest eventCreateRequest,
-                                      Errors errors,
+    public ResponseEntity createEvent(@RequestBody @Valid EventCreateRequest eventCreateRequest,
                                       @CurrentUser Account account) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(new ErrorResource(errors));
-        }
-        eventValidator.validate(eventCreateRequest, errors);
-        if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(new ErrorResource(errors));
-        }
+//        eventValidator.validate(eventCreateRequest, errors);
+//        if (errors.hasErrors()) {
+//            return ResponseEntity.badRequest().body(new ErrorResource(errors));
+//        }
 
         Event event = modelMapper.map(eventCreateRequest, Event.class);
         event.update();
