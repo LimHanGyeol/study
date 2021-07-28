@@ -1,6 +1,7 @@
 package com.tommy.bootrest.event.service;
 
 import com.tommy.bootrest.acount.domain.Account;
+import com.tommy.bootrest.acount.exception.NotMatchAccountException;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
@@ -43,7 +44,7 @@ public class EventService {
 
     public boolean validateEventManager(Long id, Account account) {
         Event findEvent = findEventById(id);
-        return findEvent.validateEventManager(account);
+        return findEvent.isCreatedByManager(account);
     }
 
     @Transactional
@@ -60,9 +61,8 @@ public class EventService {
     @Transactional
     public EventResponse updateEvent(Long id, EventUpdateRequest eventUpdateRequest, Account account) {
         Event event = findEventById(id);
-        // event manager 검증 리팩토링 필요, 아닐 경우 UnAuthorized Exception 발생, Interceptor 고려
-        if (!event.validateEventManager(account)) {
-            throw new RuntimeException("UnAuthorized");
+        if (!event.isCreatedByManager(account)) {
+            throw new NotMatchAccountException();
         }
         event.updateEvent(eventUpdateRequest.getName(), eventUpdateRequest.getDescription());
         return EventResponse.of(event);

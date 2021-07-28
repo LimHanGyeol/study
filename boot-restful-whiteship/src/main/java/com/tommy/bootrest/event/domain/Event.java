@@ -95,7 +95,7 @@ public class Event {
         this.manager = account;
     }
 
-    public boolean validateEventManager(Account account) {
+    public boolean isCreatedByManager(Account account) {
         return this.manager.equals(account);
     }
 

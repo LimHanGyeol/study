@@ -5,7 +5,6 @@ import com.tommy.bootrest.acount.domain.CurrentUser;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventResponse;
 import com.tommy.bootrest.event.dto.EventUpdateRequest;
-import com.tommy.bootrest.event.dto.EventValidator;
 import com.tommy.bootrest.event.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
