@@ -153,18 +153,28 @@ class EventControllerTest extends AcceptanceTest {
     }
 
     @Test
-    @DisplayName("이벤트 생성 시 허용하지 않은 값이 들어올 경우")
+    @DisplayName("이벤트 생성 시 잘못된 값이 들어올 경우")
     void create_event_bad_request() throws Exception {
         // given
-//        Event event = newEventInstance(1L);
-        EventCreateRequest event = newEventCreateRequestInstance();
+        EventCreateRequest eventCreateRequest = EventCreateRequest.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
+                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
+                .beginEventDateTime(LocalDateTime.of(2020, 7, 7, 20, 0))
+                .endEventDateTime(LocalDateTime.of(2020, 7, 6, 22, 0))
+                .basePrice(-1)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타트업 팩토리")
+                .build();
 
         // when
         ResultActions response = mockMvc.perform(post("/api/events")
                 .header(AUTHORIZATION, getBearerAccessToken(true))
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(event))
+                .content(objectMapper.writeValueAsString(eventCreateRequest))
         ).andDo(print());
 
         // then

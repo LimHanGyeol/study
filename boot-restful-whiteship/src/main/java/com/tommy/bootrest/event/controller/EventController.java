@@ -30,16 +30,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class EventController {
 
     private final EventService eventService;
-    private final EventValidator eventValidator;
     private final PagedResourcesAssembler<EventResponse> assembler;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<EventResponse> createEvent(@RequestBody @Valid EventCreateRequest eventCreateRequest,
                                                      @CurrentUser Account account) {
-//        eventValidator.validate(eventCreateRequest, errors);
-//        if (errors.hasErrors()) {
-//            return ResponseEntity.badRequest().body(new ErrorResource(errors));
-//        }
         EventResponse savedEventResponse = eventService.saveEvent(eventCreateRequest, account);
 
         WebMvcLinkBuilder selfLinkBuilder = linkTo(this.getClass()).slash(savedEventResponse.getId());
@@ -83,12 +78,7 @@ public class EventController {
                                                      @CurrentUser Account account) {
         EventResponse eventResponse = eventService.updateEvent(id, eventUpdateRequest, account);
 
-        // DTO 검증 Validation. 제네릭 염두 하기
-        // eventValidator.validate(eventUpdateRequest, errors);
-        // if (errors.hasErrors()) {
-        // return ResponseEntity.badRequest().build();
-        // }
-
+        // DTO 검증 Validation. EventCreateValid와 같은 방식으로 처리하면 된다.
         eventResponse.add(Link.of("/docs/index.html#resources-events-update").withRel("profile"));
         return ResponseEntity.ok(eventResponse);
     }

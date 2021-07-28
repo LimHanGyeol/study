@@ -1,45 +1,34 @@
 package com.tommy.bootrest.event.dto;
 
+import com.tommy.bootrest.event.dto.validator.annotation.EventCreateValid;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+/**
+ * EventCreateValid 라는 Custom Validation을 사용함으로써
+ * 기존의 Annotation 기반 Valid는 사용하지 않게 됐다.
+ * 더 많은 처리 방법을 생각하여 상황별로 좋은 처리 방법을 생각하자.
+ */
 @Getter
+@EventCreateValid
 @NoArgsConstructor
 public class EventCreateRequest {
 
-    @NotEmpty
     private String name;
-
-    @NotEmpty
     private String description;
-
     private String location; // optional (장소 정보가 없으면 온라인 모임)
 
-    @Min(0)
     private int basePrice; // optional
-
-    @Min(0)
     private int maxPrice; // optional
 
-    @Min(0)
     private int limitOfEnrollment;
 
-    @NotNull
     private LocalDateTime beginEnrollmentDateTime;
-
-    @NotNull
     private LocalDateTime closeEnrollmentDateTime;
-
-    @NotNull
     private LocalDateTime beginEventDateTime;
-
-    @NotNull
     private LocalDateTime endEventDateTime;
 
     @Builder
