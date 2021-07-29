@@ -1,7 +1,7 @@
 package com.tommy.bootrest.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.tommy.bootrest.event.controller.EventController;
+import com.tommy.bootrest.event.presentation.EventController;
 import com.tommy.bootrest.event.domain.Event;
 import org.springframework.hateoas.RepresentationModel;
 

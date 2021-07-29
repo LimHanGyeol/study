@@ -1,4 +1,4 @@
-package com.tommy.bootrest.acount.service;
+package com.tommy.bootrest.acount.application;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.AccountRole;

@@ -1,14 +1,7 @@
-package com.tommy.bootrest.event.controller;
+package com.tommy.bootrest.event.acceptance;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tommy.bootrest.acount.domain.Account;
-import com.tommy.bootrest.acount.domain.AccountRepository;
-import com.tommy.bootrest.acount.domain.AccountRole;
-import com.tommy.bootrest.acount.service.AccountService;
 import com.tommy.bootrest.common.AcceptanceTest;
-import com.tommy.bootrest.common.config.AppProperties;
 import com.tommy.bootrest.event.domain.Event;
-import com.tommy.bootrest.event.domain.EventRepository;
 import com.tommy.bootrest.event.domain.EventStatus;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventUpdateRequest;
@@ -16,24 +9,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -50,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 현재는 properties에 정의했지만, 이는 CharacterEncodingFilter를 Bean으로 재정의하여 UTF-8을 지정하고,
  * SecurityFilter에 CsrfFilter.class 앞에 정의하여 해결할 수도 있다.
  *
+ * <p>
  * 참조
  * http://honeymon.io/tech/2019/10/23/spring-deprecated-media-type.html
  * https://namocom.tistory.com/832
@@ -58,40 +43,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class EventControllerTest extends AcceptanceTest {
 
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private AppProperties appProperties;
+    private EventRequestStep requestStep;
+    private String accessToken;
 
     @BeforeEach
-    void setUp() {
-        eventRepository.deleteAll();
-        accountRepository.deleteAll();
+    public void setUp() throws Exception {
+        super.setUp();
+        requestStep = new EventRequestStep(mockMvc, objectMapper);
+        accessToken = getBearerAccessToken(true);
     }
 
     @Test
     @DisplayName("정상적으로 이벤트를 생성할 경우")
     void create_event() throws Exception {
         // given
-        EventCreateRequest eventCreateRequest = newEventCreateRequestInstance();
+        EventCreateRequest eventCreateRequest = requestStep.newEventCreateRequest(100);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventCreateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.이벤트_생성_요청(eventCreateRequest, accessToken);
 
         // then
         response
@@ -152,30 +121,15 @@ class EventControllerTest extends AcceptanceTest {
                 ));
     }
 
+
     @Test
     @DisplayName("이벤트 생성 시 잘못된 값이 들어올 경우")
     void create_event_bad_request() throws Exception {
         // given
-        EventCreateRequest eventCreateRequest = EventCreateRequest.builder()
-                .name("Spring")
-                .description("REST API Development with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
-                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
-                .beginEventDateTime(LocalDateTime.of(2020, 7, 7, 20, 0))
-                .endEventDateTime(LocalDateTime.of(2020, 7, 6, 22, 0))
-                .basePrice(-1)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타트업 팩토리")
-                .build();
+        EventCreateRequest eventCreateRequest = requestStep.newEventCreateRequest(-1);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventCreateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.이벤트_생성_요청(eventCreateRequest, accessToken);
 
         // then
         response.andExpect(status().isBadRequest());
@@ -188,12 +142,7 @@ class EventControllerTest extends AcceptanceTest {
         EventCreateRequest eventCreateRequest = EventCreateRequest.builder().build();
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventCreateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.이벤트_생성_요청(eventCreateRequest, accessToken);
 
         // then
         response.andExpect(status().isBadRequest())
@@ -209,26 +158,10 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("이벤트 생성 시 잘못된 조건이 있을 경우")
     void create_event_bad_request_wrong_input() throws Exception {
         // given
-        EventCreateRequest eventCreateRequest = EventCreateRequest.builder()
-                .name("Spring")
-                .description("REST API Development with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
-                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
-                .beginEventDateTime(LocalDateTime.of(2020, 7, 7, 20, 0))
-                .endEventDateTime(LocalDateTime.of(2020, 7, 6, 22, 0))
-                .basePrice(10000)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타트업 팩토리")
-                .build();
+        EventCreateRequest eventCreateRequest = requestStep.newEventCreateRequest(10000);
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventCreateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.이벤트_생성_요청(eventCreateRequest, accessToken);
 
         // then
         response.andExpect(status().isBadRequest());
@@ -238,12 +171,10 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("한건의 이벤트 조회")
     void getEvent() throws Exception {
         // given
-        Account account = createAccount();
-        Event event = newEventInstance(1, account);
-        Event savedEvent = eventRepository.save(event);
+        Event savedEvent = newEventOfLoginAccount(1234);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/events/{id}", savedEvent.getId()));
+        ResultActions response = requestStep.이벤트_한_건_조회_요청(savedEvent.getId());
 
         // then
         response.andExpect(status().isOk())
@@ -258,24 +189,20 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("존재하지 않는 이벤트 조회 시 404 NotFound Error")
     void nonExistEvent() throws Exception {
         // when
-        ResultActions response = mockMvc.perform(get("/api/events/1234"));
+        ResultActions response = requestStep.이벤트_한_건_조회_요청(1234L);
 
         // then
         response.andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("토큰을 갖지 않고 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+    @DisplayName("로그인 전 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
     void queryEvents() throws Exception {
         // given
         IntStream.range(0, 30).forEach(this::generateEvent);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/events")
-                .param("page", "1")
-                .param("size", "10")
-                .param("sort", "name,DESC"))
-                .andDo(print());
+        ResultActions response = requestStep.로그인_전_이벤트_목록_조회_요청();
 
         // then
         response.andExpect(status().isOk())
@@ -286,19 +213,15 @@ class EventControllerTest extends AcceptanceTest {
                 .andDo(document("query-events"));
     }
 
+
     @Test
-    @DisplayName("토큰을 갖고 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+    @DisplayName("로그인 후 30개의 이벤트를 10개씩 두번째 페이지 조회하기")
     void queryEventsWithAuthentication() throws Exception {
         // given
         IntStream.range(0, 30).forEach(this::generateEvent);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/events")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .param("page", "1")
-                .param("size", "10")
-                .param("sort", "name,DESC"))
-                .andDo(print());
+        ResultActions response = requestStep.로그인_후_이벤트_목록_조회_요청(accessToken);
 
         // then
         response.andExpect(status().isOk())
@@ -310,28 +233,20 @@ class EventControllerTest extends AcceptanceTest {
                 .andDo(document("query-events"));
     }
 
+    @Disabled
     @Test
     @DisplayName("이벤트를 정상적으로 수정하기")
     void updateEvent() throws Exception {
         // given
-        Account account = createAccount();
         String updatedEventName = "updated event";
         String updatedEventDescription = "updated description";
-
-        Event event = newEventInstance(100, account);
-        Event savedEvent = eventRepository.save(event);
-
-        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(savedEvent);
+        Event event = newEventOfLoginAccount(1000);
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(event);
         eventUpdateRequest.updateName(updatedEventName);
         eventUpdateRequest.updateDescription(updatedEventDescription);
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/events/{id}", savedEvent.getId())
-                .header(AUTHORIZATION, getBearerAccessToken(false))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventUpdateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.로그인_및_이벤트_수정_요청(event.getId(), eventUpdateRequest, accessToken);
 
         // then
         response.andExpect(status().isOk())
@@ -345,16 +260,11 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("입력값이 비어있는 경우에 이벤트 수정 실패")
     void invalidUpdateEventV1() throws Exception {
         // given
-        Event event = generateEvent(1);
+        Event savedEvent = newEventOfLoginAccount(1L);
         EventUpdateRequest eventUpdateRequest = new EventUpdateRequest();
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventUpdateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.로그인_및_이벤트_수정_요청(savedEvent.getId(), eventUpdateRequest, accessToken);
 
         // then
         response.andExpect(status().isBadRequest());
@@ -365,143 +275,32 @@ class EventControllerTest extends AcceptanceTest {
     @DisplayName("입력값이 잘못된 경우에 이벤트 수정 실패")
     void invalidUpdateEventV2() throws Exception {
         // given
-        Event event = newEventInstance(1L);
-        Event savedEvent = eventRepository.save(event);
+        Event savedEvent = newEventOfLoginAccount(1L);
         EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(savedEvent);
-
         eventUpdateRequest.updateBasePrice(20000);
         eventUpdateRequest.updateMaxPrice(1000);
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/events/{id}", event.getId())
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventUpdateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.로그인_및_이벤트_수정_요청(savedEvent.getId(), eventUpdateRequest, accessToken);
 
         // then
         response.andExpect(status().isBadRequest());
     }
 
+    @Disabled
     @Test
     @DisplayName("존재하지 않는 이벤트 수정 실패")
     void invalidUpdateEventV3() throws Exception {
         // given
-        Event event = newEventInstance(1L);
-        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest(event);
+        EventUpdateRequest eventUpdateRequest = new EventUpdateRequest();
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/events/234")
-                .header(AUTHORIZATION, getBearerAccessToken(true))
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventUpdateRequest))
-        ).andDo(print());
+        ResultActions response = requestStep.로그인_및_이벤트_수정_요청(200L, eventUpdateRequest, accessToken);
 
         // then
         response.andExpect(status().isNotFound());
     }
-
-    private Event generateEvent(int index) {
-        Event event = Event.builder()
-                .name("event" + index)
-                .description("test event")
-                .build();
-        event.createdEventByManager(createAccount(index));
-
-        return eventRepository.save(event);
-    }
-
-    private EventCreateRequest newEventCreateRequestInstance() {
-        return EventCreateRequest.builder()
-                .name("Spring")
-                .description("REST API Development with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
-                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
-                .beginEventDateTime(LocalDateTime.of(2020, 7, 25, 20, 0))
-                .endEventDateTime(LocalDateTime.of(2020, 7, 26, 22, 0))
-                .basePrice(100)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타트업 팩토리")
-                .build();
-    }
-
-    private Event newEventInstance(long index, Account account) {
-        Event event = buildEvent(index);
-        event.createdEventByManager(account);
-        return event;
-    }
-
-    private Event newEventInstance(long index) {
-        return buildEvent(index);
-    }
-
-    private Event buildEvent(long index) {
-        return Event.builder()
-                .id(index)
-                .name("Spring")
-                .description("REST API Development with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2020, 7, 8, 22, 20))
-                .closeEnrollmentDateTime(LocalDateTime.of(2020, 7, 9, 22, 20))
-                .beginEventDateTime(LocalDateTime.of(2020, 7, 25, 20, 0))
-                .endEventDateTime(LocalDateTime.of(2020, 7, 26, 22, 0))
-                .basePrice(100)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타트업 팩토리")
-                .free(true)
-                .offline(false)
-                .eventStatus(EventStatus.PUBLISHED)
-                .build();
-    }
-
-    private String getBearerAccessToken(boolean needToCreateAccount) throws Exception {
-        // given
-        String clientId = appProperties.getClientId();
-        String clientSecret = appProperties.getClientSecret();
-
-        if (needToCreateAccount) {
-            createAccount();
-        }
-
-        // when
-        ResultActions response = mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", appProperties.getUserUsername())
-                .param("password", appProperties.getUserPassword())
-                .param("grant_type", "password")
-                .accept(MediaType.APPLICATION_JSON)
-        ).andDo(print());
-
-        String responseBody = response.andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        Map map = objectMapper.readValue(responseBody, Map.class);
-        return "Bearer" + map.get("access_token").toString();
-    }
-
-    private Account createAccount(int index) {
-        return generateAccount(appProperties.getUserUsername() + index);
-    }
-
-    private Account createAccount() {
-        return generateAccount(appProperties.getUserUsername());
-    }
-
-    private Account generateAccount(String username) {
-        String password = appProperties.getUserPassword();
-        Account account = Account.builder()
-                .email(username)
-                .password(password)
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        return accountService.saveAccount(account);
-    }
 }
-
 /*
  * SpringBoot를 사용하면 ObjectMapper가 자동으로 Bean에 등록되어 있다.
  * 요청의 Input으로 들어오는 필드에서 정의하지 않은 값이 들어올 경우

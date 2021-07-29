@@ -1,4 +1,4 @@
-package com.tommy.bootrest.event.service;
+package com.tommy.bootrest.event.application;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.exception.NotMatchAccountException;

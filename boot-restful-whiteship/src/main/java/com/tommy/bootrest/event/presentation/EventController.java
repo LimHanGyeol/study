@@ -1,11 +1,11 @@
-package com.tommy.bootrest.event.controller;
+package com.tommy.bootrest.event.presentation;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.CurrentUser;
 import com.tommy.bootrest.event.dto.EventCreateRequest;
 import com.tommy.bootrest.event.dto.EventResponse;
 import com.tommy.bootrest.event.dto.EventUpdateRequest;
-import com.tommy.bootrest.event.service.EventService;
+import com.tommy.bootrest.event.application.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -2,7 +2,7 @@ package com.tommy.bootrest.common.config;
 
 import com.tommy.bootrest.acount.domain.Account;
 import com.tommy.bootrest.acount.domain.AccountRole;
-import com.tommy.bootrest.acount.service.AccountService;
+import com.tommy.bootrest.acount.application.AccountService;
 import com.tommy.bootrest.common.auth.LoginValidationInterceptor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

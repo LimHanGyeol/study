@@ -1,6 +1,6 @@
 package com.tommy.bootrest.event.dto;
 
-import com.tommy.bootrest.event.controller.EventController;
+import com.tommy.bootrest.event.presentation.EventController;
 import com.tommy.bootrest.event.domain.Event;
 import com.tommy.bootrest.event.domain.EventStatus;
 import lombok.Getter;
